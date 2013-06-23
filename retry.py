@@ -21,7 +21,6 @@ def retry(exceptions=Exception, tries=3, delay=3, backoff=2, logger=StderrLogger
                 round_delay = delay * backoff ** i
                 logger.warning('{}, retrying in {} seconds...'.format(e, round_delay))
                 time.sleep(round_delay)
-        else:
-            return f(*args, **kwargs)
+        return f(*args, **kwargs)
 
     return wrapper
