@@ -13,7 +13,7 @@ class StderrLogger(object):
 def retry(exceptions=Exception, tries=3, delay=3, backoff=2, logger=StderrLogger()):
 
     @decorator
-    def wrapper(f, *args, **kwargs):
+    def retry_decorator(f, *args, **kwargs):
         for i in range(tries - 1):
             try:
                 return f(*args, **kwargs)
@@ -23,4 +23,4 @@ def retry(exceptions=Exception, tries=3, delay=3, backoff=2, logger=StderrLogger
                 time.sleep(round_delay)
         return f(*args, **kwargs)
 
-    return wrapper
+    return retry_decorator
