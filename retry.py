@@ -1,5 +1,6 @@
 import sys
 import time
+from itertools import count
 
 from decorator import decorator
 
@@ -14,13 +15,14 @@ def retry(exceptions=Exception, tries=3, delay=3, backoff=2, logger=StderrLogger
 
     @decorator
     def retry_decorator(f, *args, **kwargs):
-        for i in range(tries - 1):
+        for i in count():
             try:
                 return f(*args, **kwargs)
             except exceptions, e:
+                if i >= tries:
+                    raise
                 round_delay = delay * backoff ** i
                 logger.warning('{}, retrying in {} seconds...'.format(e, round_delay))
                 time.sleep(round_delay)
-        return f(*args, **kwargs)
 
     return retry_decorator
