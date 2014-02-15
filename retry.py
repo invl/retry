@@ -1,17 +1,15 @@
-import sys
+import logging
 import time
 from itertools import count
 
 from decorator import decorator
 
 
-class StderrLogger(object):
-
-    def warning(self, msg):
-        sys.stderr.write(msg + '\n')
+log = logging.getLogger(__name__)
+log.addHandler(logging.NullHandler())
 
 
-def retry(exceptions=Exception, tries=None, delay=3, backoff=2, logger=StderrLogger()):
+def retry(exceptions=Exception, tries=None, delay=3, backoff=2):
 
     @decorator
     def retry_decorator(f, *args, **kwargs):
@@ -22,12 +20,14 @@ def retry(exceptions=Exception, tries=None, delay=3, backoff=2, logger=StderrLog
                 if tries is not None and i >= tries:
                     raise
                 round_delay = delay * backoff ** i
-                logger.warning('{}, retrying in {} seconds...'.format(e, round_delay))
+                log.warning('{}, retrying in {} seconds...'.format(e, round_delay))
                 time.sleep(round_delay)
 
     return retry_decorator
 
 if __name__ == '__main__':
+    logging.basicConfig()
+
     @retry(tries=3, delay=1)
     def f():
         1 / 0
