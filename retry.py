@@ -11,7 +11,7 @@ class StderrLogger(object):
         sys.stderr.write(msg + '\n')
 
 
-def retry(exceptions=Exception, tries=3, delay=3, backoff=2, logger=StderrLogger()):
+def retry(exceptions=Exception, tries=None, delay=3, backoff=2, logger=StderrLogger()):
 
     @decorator
     def retry_decorator(f, *args, **kwargs):
@@ -19,7 +19,7 @@ def retry(exceptions=Exception, tries=3, delay=3, backoff=2, logger=StderrLogger
             try:
                 return f(*args, **kwargs)
             except exceptions, e:
-                if i >= tries:
+                if tries is not None and i >= tries:
                     raise
                 round_delay = delay * backoff ** i
                 logger.warning('{}, retrying in {} seconds...'.format(e, round_delay))
