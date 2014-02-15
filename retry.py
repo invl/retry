@@ -26,3 +26,9 @@ def retry(exceptions=Exception, tries=3, delay=3, backoff=2, logger=StderrLogger
                 time.sleep(round_delay)
 
     return retry_decorator
+
+if __name__ == '__main__':
+    @retry(tries=3, delay=1)
+    def f():
+        1 / 0
+    f()
