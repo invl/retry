@@ -9,7 +9,7 @@ log = logging.getLogger(__name__)
 log.addHandler(logging.NullHandler())
 
 
-def retry(exceptions=Exception, tries=None, delay=0, backoff=2):
+def retry(exceptions=Exception, tries=float('inf'), delay=0, backoff=2):
 
     @decorator
     def retry_decorator(f, *args, **kwargs):
@@ -17,7 +17,7 @@ def retry(exceptions=Exception, tries=None, delay=0, backoff=2):
             try:
                 return f(*args, **kwargs)
             except exceptions, e:
-                if tries is not None and i >= tries:
+                if i >= tries:
                     raise
                 round_delay = delay * backoff ** i
                 log.warning('{}, retrying in {} seconds...'.format(e, round_delay))
