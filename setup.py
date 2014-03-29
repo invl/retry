@@ -5,7 +5,7 @@ setup(
     name='retry',
     version='0.3.0',
     description='retry decorator',
-    py_modules=['retry'],
+    packages=['retry'],
     install_requires=[
         'decorator',
     ]
