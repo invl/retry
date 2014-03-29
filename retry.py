@@ -9,7 +9,7 @@ log = logging.getLogger(__name__)
 log.addHandler(logging.NullHandler())
 
 
-def retry(exceptions=Exception, tries=float('inf'), delay=0, backoff=2):
+def retry(exceptions=Exception, tries=float('inf'), delay=0, backoff=1):
 
     @decorator
     def retry_decorator(f, *args, **kwargs):
