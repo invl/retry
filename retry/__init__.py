@@ -10,6 +10,13 @@ log.addHandler(logging.NullHandler())
 
 
 def retry(exceptions=Exception, tries=float('inf'), delay=0, backoff=1):
+    """Return a decorator for retrying.
+
+    :param exceptions: an exception or a tuple of exceptions to catch
+    :param tries: the maximum number of attempts
+    :param delay: how many seconds to wait between attmpts
+    :param backoff: delay growth factor
+    """
 
     @decorator
     def retry_decorator(f, *args, **kwargs):
