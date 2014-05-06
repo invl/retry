@@ -55,6 +55,7 @@ setup(
     description='retry decorator',
     long_description=__doc__,
     packages=['retry'],
+    license='Apache License 2.0',
     install_requires=[
         'decorator',
     ]
