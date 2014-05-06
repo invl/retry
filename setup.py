@@ -51,7 +51,7 @@ from setuptools import setup
 
 setup(
     name='retry',
-    version='0.4.0',
+    version='0.4.1',
     description='retry decorator',
     long_description=__doc__,
     packages=['retry'],
