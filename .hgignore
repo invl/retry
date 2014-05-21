@@ -2,3 +2,4 @@ syntax: glob
 .git
 .ropeproject
 .env
+*.egg-info
