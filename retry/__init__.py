@@ -5,8 +5,16 @@ from itertools import count
 from decorator import decorator
 
 
+# Set default logging handler to avoid "No handler found" warnings.
+try:  # Python 2.7+
+    from logging import NullHandler
+except ImportError:
+    class NullHandler(logging.Handler):
+        def emit(self, record):
+            pass
+
 log = logging.getLogger(__name__)
-log.addHandler(logging.NullHandler())
+log.addHandler(NullHandler())
 
 
 def retry(exceptions=Exception, tries=float('inf'), delay=0, backoff=1):
@@ -27,7 +35,7 @@ def retry(exceptions=Exception, tries=float('inf'), delay=0, backoff=1):
                 if i >= tries:
                     raise
                 round_delay = delay * backoff ** i
-                log.warning('{}, retrying in {} seconds...'.format(e, round_delay))
+                log.warning('%s, retrying in %s seconds...', e, round_delay)
                 time.sleep(round_delay)
 
     return retry_decorator
