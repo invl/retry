@@ -1,3 +1,4 @@
 syntax: glob
 .git
 .ropeproject
+.env
