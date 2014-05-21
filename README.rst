@@ -1,11 +1,11 @@
 retry
------
+=====
 
 retry is a decorator for isolating retrying logic, with logging intergraton.
 
 
 API
-```
+---
 
 .. code:: python
 
@@ -15,7 +15,7 @@ various retrying logic can be achieved by combination of arguments.
 
 
 Examples
-````````
+--------
 
 .. code:: python
 
