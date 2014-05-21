@@ -4,6 +4,16 @@ retry
 retry is a decorator for isolating retrying logic, with logging intergraton.
 
 
+Installation
+------------
+
+To install _retry_, simply:
+
+.. code-block:: bash
+
+    $ pip install retry
+
+
 API
 ---
 
