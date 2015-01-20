@@ -9,9 +9,6 @@ setup(
     url='https://github.com/invl/retry',
     packages=['retry'],
     license='Apache License 2.0',
-    install_requires=[
-        'decorator',
-    ],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
