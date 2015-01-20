@@ -16,8 +16,6 @@ retry is a decorator for isolating retrying logic, with logging intergraton.
 Installation
 ------------
 
-To install _retry_, simply:
-
 .. code-block:: bash
 
     $ pip install retry
@@ -28,7 +26,15 @@ API
 
 .. code:: python
 
-    retry(exceptions=Exception, tries=float('inf'), delay=0, backoff=1)
+    def retry(exceptions=Exception, tries=float('inf'), delay=0, backoff=1, logger=logging.getLogger(__name__)):
+        """Return a decorator for retrying.
+
+        :param exceptions: an exception or a tuple of exceptions to catch
+        :param tries: the maximum number of attempts
+        :param delay: how many seconds to wait between attmpts
+        :param backoff: delay growth factor
+        :param logger: logger.warning(fmt, error, delay) will be called on failed attempts
+        """
 
 various retrying logic can be achieved by combination of arguments.
 
