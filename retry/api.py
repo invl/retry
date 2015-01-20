@@ -21,7 +21,7 @@ def retry(exceptions=Exception, tries=float('inf'), delay=0, backoff=1):
         for i in count():
             try:
                 return f(*args, **kwargs)
-            except exceptions, e:
+            except exceptions as e:
                 if i >= tries:
                     raise
                 round_delay = delay * backoff ** i
