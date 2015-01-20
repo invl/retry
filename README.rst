@@ -1,6 +1,15 @@
 retry
 =====
 
+.. image:: https://pypip.in/d/retry/badge.png
+        :target: https://pypi.python.org/pypi/retry/
+
+.. image:: https://pypip.in/v/retry/badge.png
+        :target: https://pypi.python.org/pypi/retry/
+
+.. image:: https://pypip.in/license/retry/badge.png
+        :target: https://pypi.python.org/pypi/retry/
+
 retry is a decorator for isolating retrying logic, with logging intergraton.
 
 
