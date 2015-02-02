@@ -40,7 +40,7 @@ def retry(exceptions=Exception, tries=float('inf'), delay=0, backoff=1, logger=l
             try:
                 return f(*args, **kwargs)
             except exceptions as e:
-                if i >= tries:
+                if i >= tries - 1:
                     raise
                 round_delay = delay * backoff ** i
                 if logger is not None:
