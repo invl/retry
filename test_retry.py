@@ -43,3 +43,17 @@ def test_tries_inf():
         else:
             raise ValueError
     assert f() == target
+
+
+def test_tries_minus1():
+    hit = [0]
+    target = 10
+
+    @retry(tries=-1)
+    def f():
+        hit[0] += 1
+        if hit[0] == target:
+            return target
+        else:
+            raise ValueError
+    assert f() == target
