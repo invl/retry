@@ -83,3 +83,27 @@ def test_max_delay(monkeypatch):
         f()
     assert hit[0] == tries
     assert mock_sleep_time[0] == delay * (tries - 1)
+
+
+def test_fixed_jitter(monkeypatch):
+    mock_sleep_time = [0]
+
+    def mock_sleep(seconds):
+        mock_sleep_time[0] += seconds
+
+    monkeypatch.setattr(time, 'sleep', mock_sleep)
+
+    hit = [0]
+
+    tries = 10
+    jitter = 1
+
+    @retry(tries=tries, jitter=jitter)
+    def f():
+        hit[0] += 1
+        1 / 0
+
+    with pytest.raises(ZeroDivisionError):
+        f()
+    assert hit[0] == tries
+    assert mock_sleep_time[0] == sum(range(tries - 1))

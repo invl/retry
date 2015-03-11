@@ -35,7 +35,7 @@ API
 
 .. code:: python
 
-    def retry(exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1, logger=logging_logger):
+    def retry(exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1, jitter=0, logger=logging_logger):
         """Return a retry decorator.
 
         :param exceptions: an exception or a tuple of exceptions to catch. default: Exception.
@@ -43,6 +43,8 @@ API
         :param delay: initial delay between attempts. default: 0.
         :param max_delay: the maximum value of delay. default: None (no limit).
         :param backoff: multiplier applied to delay between attempts. default: 1 (no backoff).
+        :param jitter: extra seconds added to delay between attempts. default: 0.
+                       fixed if a number, random if a range tuple (min, max)
         :param logger: logger.warning(fmt, error, delay) will be called on failed attempts.
                        default: retry.logging_logger. if None, logging is disabled.
         """
@@ -80,6 +82,12 @@ Examples
     @retry((ValueError, TypeError), delay=1, backoff=2, max_delay=4)
     def make_trouble():
         '''Retry on ValueError or TypeError, sleep 1, 2, 4, 4, ... seconds between attempts.'''
+
+.. code:: python
+
+    @retry(ValueError, delay=1, jitter=1)
+    def make_trouble():
+        '''Retry on ValueError, sleep 1, 2, 3, 4, ... seconds between attempts.'''
 
 .. code:: python
 
