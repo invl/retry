@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name='retry',
-    version='0.6.0',
+    version='0.7.0',
     description='retry decorator',
     long_description=open('README.rst').read(),
     url='https://github.com/invl/retry',
