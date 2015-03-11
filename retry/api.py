@@ -9,7 +9,7 @@ except ImportError:
 logging_logger = logging.getLogger(__name__)
 
 
-def retry(exceptions=Exception, tries=float('inf'), delay=0, backoff=1, logger=logging_logger):
+def retry(exceptions=Exception, tries=-1, delay=0, backoff=1, logger=logging_logger):
     """Return a decorator for retrying.
 
     :param exceptions: an exception or a tuple of exceptions to catch
