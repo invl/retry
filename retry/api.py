@@ -10,14 +10,14 @@ logging_logger = logging.getLogger(__name__)
 
 
 def retry(exceptions=Exception, tries=-1, delay=0, backoff=1, logger=logging_logger):
-    """Return a decorator for retrying.
+    """Return a retry decorator.
 
-    :param exceptions: an exception or a tuple of exceptions to catch
-    :param tries: the maximum number of attempts
-    :param delay: how many seconds to wait between attmpts
-    :param backoff: delay growth factor
+    :param exceptions: an exception or a tuple of exceptions to catch. default: Exception.
+    :param tries: the maximum number of attempts. default: -1 (infinite).
+    :param delay: initial delay between attempts. default: 0.
+    :param backoff: multiplier applied to delay between attempts. default: 1 (no backoff).
     :param logger: logger.warning(fmt, error, delay) will be called on failed attempts.
-                   defaults to retry.logging_logger. If logger=None, logging is disabled.
+                   default: retry.logging_logger. if None, logging is disabled.
     """
 
     @decorator
