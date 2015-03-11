@@ -29,3 +29,17 @@ def test_retry(monkeypatch):
     assert hit[0] == tries
     assert mock_sleep_time[0] == sum(
         delay * backoff ** i for i in range(tries - 1))
+
+
+def test_tries_inf():
+    hit = [0]
+    target = 10
+
+    @retry(tries=float('inf'))
+    def f():
+        hit[0] += 1
+        if hit[0] == target:
+            return target
+        else:
+            raise ValueError
+    assert f() == target
