@@ -24,15 +24,17 @@ def retry(exceptions=Exception, tries=-1, delay=0, backoff=1, logger=logging_log
     def retry_decorator(f, *args, **kwargs):
         _tries, _delay = tries, delay
         while _tries:
-            _tries -= 1
             try:
                 return f(*args, **kwargs)
             except exceptions as e:
+                _tries -= 1
                 if not _tries:
                     raise
+
                 if logger is not None:
                     logger.warning('%s, retrying in %s seconds...', e, _delay)
-            time.sleep(_delay)
-            _delay *= backoff
+
+                time.sleep(_delay)
+                _delay *= backoff
 
     return retry_decorator
