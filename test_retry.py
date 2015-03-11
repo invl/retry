@@ -57,3 +57,29 @@ def test_tries_minus1():
         else:
             raise ValueError
     assert f() == target
+
+
+def test_max_delay(monkeypatch):
+    mock_sleep_time = [0]
+
+    def mock_sleep(seconds):
+        mock_sleep_time[0] += seconds
+
+    monkeypatch.setattr(time, 'sleep', mock_sleep)
+
+    hit = [0]
+
+    tries = 5
+    delay = 1
+    backoff = 2
+    max_delay = delay  # Never increase delay
+
+    @retry(tries=tries, delay=delay, max_delay=max_delay, backoff=backoff)
+    def f():
+        hit[0] += 1
+        1 / 0
+
+    with pytest.raises(ZeroDivisionError):
+        f()
+    assert hit[0] == tries
+    assert mock_sleep_time[0] == delay * (tries - 1)
