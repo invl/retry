@@ -2,10 +2,8 @@ import random
 import time
 import logging
 
-try:
-    from decorator import decorator
-except ImportError:
-    from .compat import decorator
+from .compat import decorator
+
 
 logging_logger = logging.getLogger(__name__)
 
