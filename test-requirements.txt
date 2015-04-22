@@ -1,0 +1,3 @@
+mock
+pytest==2.7.0
+tox
