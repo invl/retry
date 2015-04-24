@@ -1,3 +1,2 @@
-decorator==3.4.0
-py==1.4.23
-pytest==2.6.1
+decorator==3.4.2
+py==1.4.26
