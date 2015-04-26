@@ -11,7 +11,7 @@ retry
         :target: https://pypi.python.org/pypi/retry/
 
 
-easy to use retry decorator.
+Easy to use retry decorator.
 
 
 Features
@@ -33,6 +33,9 @@ Installation
 API
 ---
 
+retry decorator
+^^^^^^^^^^^^^^^
+
 .. code:: python
 
     def retry(exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1, jitter=0, logger=logging_logger):
@@ -49,11 +52,11 @@ API
                        default: retry.logging_logger. if None, logging is disabled.
         """
 
-various retrying logic can be achieved by combination of arguments.
+Various retrying logic can be achieved by combination of arguments.
 
 
 Examples
---------
+""""""""
 
 .. code:: python
 
@@ -97,3 +100,61 @@ Examples
         import logging
         logging.basicConfig()
         make_trouble()
+
+retry_call
+^^^^^^^^^^
+
+.. code:: python
+
+    def retry_call(f, fargs=None, fkwargs=None, exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1,
+                   jitter=0,
+                   logger=logging_logger):
+        """
+        Calls a function and re-executes it if it failed.
+
+        :param f: the function to execute.
+        :param fargs: the positional arguments of the function to execute.
+        :param fkwargs: the named arguments of the function to execute.
+        :param exceptions: an exception or a tuple of exceptions to catch. default: Exception.
+        :param tries: the maximum number of attempts. default: -1 (infinite).
+        :param delay: initial delay between attempts. default: 0.
+        :param max_delay: the maximum value of delay. default: None (no limit).
+        :param backoff: multiplier applied to delay between attempts. default: 1 (no backoff).
+        :param jitter: extra seconds added to delay between attempts. default: 0.
+                       fixed if a number, random if a range tuple (min, max)
+        :param logger: logger.warning(fmt, error, delay) will be called on failed attempts.
+                       default: retry.logging_logger. if None, logging is disabled.
+        :returns: the result of the f function.
+        """
+
+This is very similar to the decorator, except that it takes a function and its arguments as parameters. The use case behind it is to be able to dynamically adjust the retry arguments.
+
+.. code:: python
+
+    import requests
+
+    from retry.api import retry_call
+
+
+    def make_trouble(service, info=None):
+        if not info:
+            info = ''
+        r = requests.get(service + info)
+        return r.text
+
+
+    def what_is_my_ip(approach=None):
+        if approach == "optimistic":
+            tries = 1
+        elif approach == "conservative":
+            tries = 3
+        else:
+            # skeptical
+            tries = -1
+        result = retry_call(make_trouble, fargs=["http://ipinfo.io/"], fkwargs={"info": "ip"}, tries=tries)
+        print(result)
+
+    what_is_my_ip("conservative")
+
+
+

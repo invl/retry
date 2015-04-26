@@ -1,0 +1,5 @@
+mock
+pbr
+pytest==2.7.0
+tox
+wheel
