@@ -1,13 +1,13 @@
 retry
 =====
 
-.. image:: https://pypip.in/d/retry/badge.png
+.. image:: https://img.shields.io/pypi/dm/retry.svg?maxAge=2592000
         :target: https://pypi.python.org/pypi/retry/
 
-.. image:: https://pypip.in/v/retry/badge.png
+.. image:: https://img.shields.io/pypi/v/retry.svg?maxAge=2592000
         :target: https://pypi.python.org/pypi/retry/
 
-.. image:: https://pypip.in/license/retry/badge.png
+.. image:: https://img.shields.io/pypi/l/retry.svg?maxAge=2592000
         :target: https://pypi.python.org/pypi/retry/
 
 
