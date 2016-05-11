@@ -1,6 +1,11 @@
 CHANGES
 =======
 
+0.9.2
+-----
+
+* Updating requirements.txt to allow for any decorators >=3.4.2
+
 0.9.1
 -----
 
