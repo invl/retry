@@ -1,8 +1,8 @@
-__all__ = ['retry']
+__all__ = ['retry', 'retry_call']
 
 import logging
 
-from .api import retry
+from .api import retry, retry_call
 
 
 # Set default logging handler to avoid "No handler found" warnings.
