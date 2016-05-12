@@ -4,7 +4,7 @@ import time
 
 from functools import partial
 
-from retry.compat import decorator
+from .compat import decorator
 
 
 logging_logger = logging.getLogger(__name__)
