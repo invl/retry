@@ -1,6 +1,9 @@
 import logging
+import os
 import random
+import sys
 import time
+import traceback
 
 from functools import partial
 
@@ -23,7 +26,7 @@ def __retry_internal(f, exceptions=Exception, tries=-1, delay=0, max_delay=None,
     :param backoff: multiplier applied to delay between attempts. default: 1 (no backoff).
     :param jitter: extra seconds added to delay between attempts. default: 0.
                    fixed if a number, random if a range tuple (min, max)
-    :param logger: logger.warning(fmt, error, delay) will be called on failed attempts.
+    :param logger: logger.warning(fmt, *args) will be called on failed attempts.
                    default: retry.logging_logger. if None, logging is disabled.
     :returns: the result of the f function.
     """
@@ -37,7 +40,10 @@ def __retry_internal(f, exceptions=Exception, tries=-1, delay=0, max_delay=None,
                 raise
 
             if logger is not None:
-                logger.warning('%s, retrying in %s seconds...', e, _delay)
+                frame = traceback.extract_tb(sys.exc_info()[2], 2)[1]
+                path, line, func, src = frame
+                loc = '{}:{}'.format(os.path.basename(path), line)
+                logger.warning('%s: %s, retrying in %s seconds...', loc, e, _delay)
 
             time.sleep(_delay)
             _delay *= backoff
