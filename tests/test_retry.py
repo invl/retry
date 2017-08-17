@@ -14,6 +14,7 @@ import pytest
 
 from retry.api import retry_call
 from retry.api import retry
+from retry.api import retry_generator
 
 
 def test_retry(monkeypatch):
@@ -183,3 +184,162 @@ def test_retry_call_with_kwargs():
 
     assert result == kwargs['value']
     assert f_mock.call_count == 1
+
+
+def test_retry_with_generator():
+    """Tests that 3 tries occur and generated result:
+    <Initial call>
+    <New call due to RuntimeError(0)>
+    [1, 2]
+    <New call due to RuntimeError(3)>
+    [1, 2, 4]
+    """
+    _vals = [RuntimeError(0), 1, 2, RuntimeError(3), 4]
+    f_calls = list()
+
+    @retry(exceptions=RuntimeError, generator=True)
+    def f_mock():
+        f_calls.append(())
+        for v in _vals:
+            if isinstance(v, BaseException):
+                _vals.remove(v)
+                raise v
+            else:
+                yield v
+
+    tries = 3
+    expected = [1, 2, 1, 2, 4]
+    actual = []
+    try:
+        actual.extend(x for x in f_mock())
+    except RuntimeError:
+        pass
+
+    assert len(f_calls) == tries
+    assert actual == expected
+
+
+def mock_generator(*vals):
+    _vals = list(vals)
+    calls = list()
+
+    def tmp_generator(*args, **kwargs):
+        calls.append((args, kwargs))
+        for v in _vals:
+            if isinstance(v, BaseException):
+                _vals.remove(v)
+                raise v
+            else:
+                yield v
+
+    return tmp_generator, calls
+
+
+def test_retry_generator():
+    """Tests that 3 tries occur and generated result:
+    <Initial call>
+    <New call due to RuntimeError(0)>
+    <New call due to RuntimeError(1)>
+    """
+    f_mock, f_calls = mock_generator(RuntimeError(0), RuntimeError(1))
+    tries = 3
+    expected = []
+    actual = []
+    try:
+        actual.extend(x for x in retry_generator(f_mock,  exceptions=RuntimeError, tries=tries))
+    except RuntimeError:
+        pass
+
+    assert len(f_calls) == 3
+    assert actual == expected
+
+
+def test_retry_generator_2():
+    """Tests that 3 tries occur and generated result:
+    <Initial call>
+    <New call due to RuntimeError(0)>
+    <New call due to RuntimeError(1)>
+    [2]
+    """
+    f_mock, f_calls = mock_generator(RuntimeError(0), RuntimeError(1), 2)
+    tries = 5
+    expected = [2]
+    actual = []
+    try:
+        actual.extend(x for x in retry_generator(f_mock, exceptions=RuntimeError, tries=tries))
+    except RuntimeError:
+        pass
+
+    assert len(f_calls) == 3
+    assert actual == expected
+
+
+def test_retry_generator_3():
+    """Tests that 3 tries occur and generated result:
+    <Initial call>
+    [0]
+    <New call due to RuntimeError(1)>
+    [0]
+    <New call due to RuntimeError(2)>
+    [0]
+    """
+    f_mock, f_calls = mock_generator(0, RuntimeError(1), RuntimeError(2))
+    tries = 5
+    expected = [0, 0, 0]
+    actual = []
+    try:
+        actual.extend(x for x in retry_generator(f_mock, exceptions=RuntimeError, tries=tries))
+    except RuntimeError:
+        pass
+
+    assert len(f_calls) == 3
+    assert actual == expected
+
+
+def test_retry_generator_4():
+    """Tests that 2 tries (vs. 3 for test above, due to parameter tries) occur and generated result:
+    <Initial call>
+    [0]
+    <New call due to RuntimeError(1)>
+    [0]
+    <New call due to RuntimeError(2)>
+    """
+    f_mock, f_calls = mock_generator(0, RuntimeError(1), RuntimeError(2))
+    tries = 2
+    expected = [0, 0]
+    actual = []
+    try:
+        actual.extend(x for x in retry_generator(f_mock, exceptions=RuntimeError, tries=tries))
+    except RuntimeError:
+        pass
+
+    assert len(f_calls) == 2
+    assert actual == expected
+
+
+def test_retry_generator_with_args():
+    """Tests args are used"""
+    f_mock, f_calls = mock_generator('test')
+    tries = 2
+    args = (1, 3)
+    try:
+        _ = [x for x in retry_generator(f_mock, fargs=args, exceptions=RuntimeError, tries=tries)]
+    except RuntimeError:
+        pass
+
+    assert len(f_calls) == 1
+    assert f_calls[0][0] == args
+
+
+def test_retry_generator_with_kwargs():
+    """Tests kwargs are used"""
+    f_mock, f_calls = mock_generator('test')
+    tries = 2
+    kwargs = {'a': 1, 'b': 3}
+    try:
+        _ = [x for x in retry_generator(f_mock, fkwargs=kwargs, exceptions=RuntimeError, tries=tries)]
+    except RuntimeError:
+        pass
+
+    assert len(f_calls) == 1
+    assert f_calls[0][1] == kwargs

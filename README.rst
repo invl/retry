@@ -38,7 +38,7 @@ retry decorator
 
 .. code:: python
 
-    def retry(exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1, jitter=0, logger=logging_logger):
+    def retry(exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1, jitter=0, logger=logging_logger, generator=False):
         """Return a retry decorator.
 
         :param exceptions: an exception or a tuple of exceptions to catch. default: Exception.
@@ -50,6 +50,8 @@ retry decorator
                        fixed if a number, random if a range tuple (min, max)
         :param logger: logger.warning(fmt, error, delay) will be called on failed attempts.
                        default: retry.logging_logger. if None, logging is disabled.
+        :param generator: if True, assumes decorated function returns a generator and wraps
+                          it in a new generator. Will retry from start on failure.
         """
 
 Various retrying logic can be achieved by combination of arguments.
@@ -100,6 +102,29 @@ Examples
         import logging
         logging.basicConfig()
         make_trouble()
+
+.. code:: python
+    vals = [RuntimeError(0), 1, 2, RuntimeError(3), 4]
+
+    @retry(generator=True)
+    def make_trouble():
+        for v in vals:
+            if isinstance(v, BaseException):
+                vals.remove(v)
+                raise v
+            else:
+                yield v
+
+    if __name__ == '__main__':
+        # [1, 2, 1, 2, 4]
+        # Actually:
+        # <Initial call>
+        # <New call due to RuntimeError(0)>
+        # 1, 2
+        # <New call due to RuntimeError(3)>
+        # 1, 2, 4
+        print([x for x in make_trouble()])
+
 
 retry_call
 ^^^^^^^^^^
@@ -158,3 +183,29 @@ This is very similar to the decorator, except that it takes a function and its a
 
 
 
+retry_generator
+^^^^^^^^^^
+
+.. code:: python
+
+    def retry_generator(f, fargs=None, fkwargs=None, exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1, jitter=0,
+                        logger=logging_logger):
+        """
+        Return a generator that wraps a generator returned by a given function, retrying from the start on failure.
+
+        :param f: the function that returns a generator
+        :param fargs: the positional arguments of the function to execute.
+        :param fkwargs: the named arguments of the function to execute.
+        :param exceptions: an exception or a tuple of exceptions to catch. default: Exception.
+        :param tries: the maximum number of attempts. default: -1 (infinite).
+        :param delay: initial delay between attempts. default: 0.
+        :param max_delay: the maximum value of delay. default: None (no limit).
+        :param backoff: multiplier applied to delay between attempts. default: 1 (no backoff).
+        :param jitter: extra seconds added to delay between attempts. default: 0.
+                       fixed if a number, random if a range tuple (min, max)
+        :param logger: logger.warning(fmt, error, delay) will be called on failed attempts.
+                       default: retry.logging_logger. if None, logging is disabled.
+        :returns: the result of the f function.
+        """
+
+This exists for the same reason as retry_call: to be able to dynamically adjust the retry arguments.
