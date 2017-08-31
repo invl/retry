@@ -50,6 +50,7 @@ retry decorator
                        fixed if a number, random if a range tuple (min, max)
         :param logger: logger.warning(fmt, error, delay) will be called on failed attempts.
                        default: retry.logging_logger. if None, logging is disabled.
+        :param instant_raise_exceptions: an exception or tuple which will be raised without retry
         """
 
 Various retrying logic can be achieved by combination of arguments.
@@ -124,6 +125,7 @@ retry_call
                        fixed if a number, random if a range tuple (min, max)
         :param logger: logger.warning(fmt, error, delay) will be called on failed attempts.
                        default: retry.logging_logger. if None, logging is disabled.
+        :param instant_raise_exceptions: an exception or tuple which will be raised without retry
         :returns: the result of the f function.
         """
 

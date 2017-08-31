@@ -70,6 +70,38 @@ def test_tries_minus1():
     assert f() == target
 
 
+def test_instant_raise_exceptions():
+
+    class MyException(Exception): pass
+    hit = [0]
+
+    @retry(instant_raise_exceptions=MyException)
+    def f():
+        hit[0] += 1
+        raise MyException
+
+    with pytest.raises(MyException):
+        f()
+    assert hit[0] == 1
+
+
+def test_exceptions_and_instant_raise_exceptions():
+
+    class MyException(Exception): pass
+    hit = [0]
+
+    @retry(instant_raise_exceptions=MyException)
+    def f():
+        hit[0] += 1
+        if hit[0] > 5:
+            raise MyException
+        else:
+            raise IOError
+    with pytest.raises(MyException):
+        f()
+    assert hit[0] == 6
+
+
 def test_max_delay(monkeypatch):
     mock_sleep_time = [0]
 
