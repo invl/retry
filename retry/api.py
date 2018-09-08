@@ -4,7 +4,7 @@ import time
 
 from functools import partial
 
-from retry.retry_config import RetryConfg
+from retry.retry_config import RetryConfig
 from .compat import decorator
 
 logging_logger = logging.getLogger(__name__)
@@ -12,7 +12,7 @@ RISE_EXCEPTION = 'rise_exception'
 
 
 def __retry_internal(f, exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1, jitter=0,
-                     logger=logging_logger, default_return=RISE_EXCEPTION, configuration: RetryConfg = None):
+                     logger=logging_logger, default_return=RISE_EXCEPTION, configuration: RetryConfig = None):
     """
     Executes a function and retries it if it failed.
 
