@@ -15,6 +15,7 @@
 .installed.cfg
 .Python
 .tox/
+.pytest_cache/
 build/
 coverage.xml
 develop-eggs/
