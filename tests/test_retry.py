@@ -183,3 +183,18 @@ def test_retry_call_with_kwargs():
 
     assert result == kwargs['value']
     assert f_mock.call_count == 1
+
+
+@pytest.mark.parametrize('exc_info', [False, True])
+def test_retry_exc_info(exc_info):
+    logger = MagicMock()
+    exception = RuntimeError()
+
+    @retry(tries=2, logger=logger, exc_info=exc_info)
+    def f():
+        raise exception
+
+    with pytest.raises(RuntimeError):
+        f()
+
+    logger.warning.assert_called_once_with('%s, retrying in %s seconds...', exception, 0, exc_info=exc_info)

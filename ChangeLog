@@ -1,6 +1,8 @@
 CHANGES
 =======
 
+* Add logging exc_info argument
+
 0.9.2
 -----
 

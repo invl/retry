@@ -38,7 +38,8 @@ retry decorator
 
 .. code:: python
 
-    def retry(exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1, jitter=0, logger=logging_logger):
+    def retry(exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1, jitter=0, logger=logging_logger,
+              exc_info=False):
         """Return a retry decorator.
 
         :param exceptions: an exception or a tuple of exceptions to catch. default: Exception.
@@ -50,6 +51,7 @@ retry decorator
                        fixed if a number, random if a range tuple (min, max)
         :param logger: logger.warning(fmt, error, delay) will be called on failed attempts.
                        default: retry.logging_logger. if None, logging is disabled.
+        :param exc_info: add full exception traceback in log, if True. default: False.
         """
 
 Various retrying logic can be achieved by combination of arguments.
@@ -107,8 +109,7 @@ retry_call
 .. code:: python
 
     def retry_call(f, fargs=None, fkwargs=None, exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1,
-                   jitter=0,
-                   logger=logging_logger):
+                   jitter=0, logger=logging_logger, exc_info=False):
         """
         Calls a function and re-executes it if it failed.
 
@@ -124,6 +125,7 @@ retry_call
                        fixed if a number, random if a range tuple (min, max)
         :param logger: logger.warning(fmt, error, delay) will be called on failed attempts.
                        default: retry.logging_logger. if None, logging is disabled.
+        :param exc_info: add full exception traceback in log, if True. default: False.
         :returns: the result of the f function.
         """
 
