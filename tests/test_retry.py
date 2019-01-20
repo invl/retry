@@ -183,3 +183,14 @@ def test_retry_call_with_kwargs():
 
     assert result == kwargs['value']
     assert f_mock.call_count == 1
+
+
+def test_retry_with_exception_condition_false():
+    f_mock = MagicMock(side_effect=RuntimeError(5678, "Run time error type 5678."))
+    try:
+        retry_call(f_mock, tries=10, exc_condition=lambda e: e.args[0] == 1234)
+    except RuntimeError:
+        pass
+
+    assert f_mock.call_count == 1
+
