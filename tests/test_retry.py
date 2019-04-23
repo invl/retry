@@ -9,6 +9,7 @@ except ImportError:
     from mock import MagicMock
 
 import time
+import asyncio
 
 import pytest
 
@@ -183,3 +184,30 @@ def test_retry_call_with_kwargs():
 
     assert result == kwargs['value']
     assert f_mock.call_count == 1
+
+
+def test_call_on_async_def():
+    hit = [0]
+
+    @retry(tries=4, delay=1)
+    async def testf(value=0):
+        hit[0] += 1
+        if value < 0:
+            await asyncio.sleep(0.1)
+            return value
+        else:
+            raise RuntimeError
+
+    loop = asyncio.get_event_loop()
+    result = loop.run_until_complete(testf(-1))
+    assert result == -1
+    assert hit[0] == 1
+
+    # === 2
+
+    try:
+        hit = [0]
+        result = loop.run_until_complete(testf(1))
+    except RuntimeError:
+        pass
+    assert hit[0] == 4
