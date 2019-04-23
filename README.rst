@@ -10,6 +10,9 @@ retry
 .. image:: https://img.shields.io/pypi/l/retry.svg?maxAge=2592000
         :target: https://pypi.python.org/pypi/retry/
 
+.. image:: https://travis-ci.com/shizacat/retry.svg?branch=master
+        :target: https://travis-ci.com/shizacat/retry.svg?branch=master
+
 
 Easy to use retry decorator.
 
