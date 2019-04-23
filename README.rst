@@ -11,7 +11,7 @@ retry
         :target: https://pypi.python.org/pypi/retry/
 
 .. image:: https://travis-ci.com/shizacat/retry.svg?branch=master
-        :target: https://travis-ci.com/shizacat/retry.svg?branch=master
+        :target: https://travis-ci.com/shizacat/retry
 
 
 Easy to use retry decorator.
