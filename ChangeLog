@@ -1,6 +1,12 @@
 CHANGES
 =======
 
+0.9.3
+-----
+
+* Tests moved out of package
+* Move NullHandler, trim setup.py
+
 0.9.2
 -----
 
