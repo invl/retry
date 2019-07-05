@@ -11,7 +11,7 @@ logging_logger = logging.getLogger(__name__)
 
 
 def __retry_internal(f, exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1, jitter=0,
-                     logger=logging_logger):
+                     logger=logging_logger, fail_callback=None):
     """
     Executes a function and retries it if it failed.
 
@@ -25,6 +25,7 @@ def __retry_internal(f, exceptions=Exception, tries=-1, delay=0, max_delay=None,
                    fixed if a number, random if a range tuple (min, max)
     :param logger: logger.warning(fmt, error, delay) will be called on failed attempts.
                    default: retry.logging_logger. if None, logging is disabled.
+    :param fail_callback: fail_callback(e) will be called on failed attempts.
     :returns: the result of the f function.
     """
     _tries, _delay = tries, delay
@@ -39,6 +40,9 @@ def __retry_internal(f, exceptions=Exception, tries=-1, delay=0, max_delay=None,
             if logger is not None:
                 logger.warning('%s, retrying in %s seconds...', e, _delay)
 
+            if fail_callback is not None:
+                fail_callback(e)
+
             time.sleep(_delay)
             _delay *= backoff
 
@@ -51,7 +55,7 @@ def __retry_internal(f, exceptions=Exception, tries=-1, delay=0, max_delay=None,
                 _delay = min(_delay, max_delay)
 
 
-def retry(exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1, jitter=0, logger=logging_logger):
+def retry(exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1, jitter=0, logger=logging_logger, fail_callback=None):
     """Returns a retry decorator.
 
     :param exceptions: an exception or a tuple of exceptions to catch. default: Exception.
@@ -63,6 +67,7 @@ def retry(exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1, ji
                    fixed if a number, random if a range tuple (min, max)
     :param logger: logger.warning(fmt, error, delay) will be called on failed attempts.
                    default: retry.logging_logger. if None, logging is disabled.
+    :param fail_callback: fail_callback(e) will be called on failed attempts.
     :returns: a retry decorator.
     """
 
@@ -71,14 +76,15 @@ def retry(exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1, ji
         args = fargs if fargs else list()
         kwargs = fkwargs if fkwargs else dict()
         return __retry_internal(partial(f, *args, **kwargs), exceptions, tries, delay, max_delay, backoff, jitter,
-                                logger)
+                                logger, fail_callback)
 
     return retry_decorator
 
 
 def retry_call(f, fargs=None, fkwargs=None, exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1,
                jitter=0,
-               logger=logging_logger):
+               logger=logging_logger,
+               fail_callback=None):
     """
     Calls a function and re-executes it if it failed.
 
@@ -94,8 +100,10 @@ def retry_call(f, fargs=None, fkwargs=None, exceptions=Exception, tries=-1, dela
                    fixed if a number, random if a range tuple (min, max)
     :param logger: logger.warning(fmt, error, delay) will be called on failed attempts.
                    default: retry.logging_logger. if None, logging is disabled.
+    :param fail_callback: fail_callback(e) will be called on failed attempts.
     :returns: the result of the f function.
     """
     args = fargs if fargs else list()
     kwargs = fkwargs if fkwargs else dict()
-    return __retry_internal(partial(f, *args, **kwargs), exceptions, tries, delay, max_delay, backoff, jitter, logger)
+    return __retry_internal(partial(f, *args, **kwargs), exceptions, tries, delay, max_delay, backoff, jitter, logger,
+                            fail_callback)
