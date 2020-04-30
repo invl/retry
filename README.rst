@@ -27,7 +27,7 @@ Installation
 
 .. code-block:: bash
 
-    $ pip install retry
+    $ pip install git+https://github.com/brookman1/retry.git
 
 
 API
