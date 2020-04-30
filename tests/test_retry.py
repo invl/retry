@@ -8,21 +8,28 @@ try:
 except ImportError:
     from mock import MagicMock
 
-import time
+import threading
 
 import pytest
 
 from retry.api import retry_call
 from retry.api import retry
 
+def mock_condition():
+    class mockCondition():
+        def acquire(self):
+            pass
+        def release(self):
+            pass
+        def wait(self, seconds):
+            mock_sleep_time[0] += seconds
+    return mockCondition()
+
 
 def test_retry(monkeypatch):
     mock_sleep_time = [0]
 
-    def mock_sleep(seconds):
-        mock_sleep_time[0] += seconds
-
-    monkeypatch.setattr(time, 'sleep', mock_sleep)
+    monkeypatch.setattr(threading, 'Condition', mock_condition)
 
     hit = [0]
 
@@ -73,17 +80,14 @@ def test_tries_minus1():
 def test_max_delay(monkeypatch):
     mock_sleep_time = [0]
 
-    def mock_sleep(seconds):
-        mock_sleep_time[0] += seconds
-
-    monkeypatch.setattr(time, 'sleep', mock_sleep)
-
     hit = [0]
 
     tries = 5
     delay = 1
     backoff = 2
     max_delay = delay  # Never increase delay
+    
+    monkeypatch.setattr(threading, 'Condition', mock_condition)
 
     @retry(tries=tries, delay=delay, max_delay=max_delay, backoff=backoff)
     def f():
