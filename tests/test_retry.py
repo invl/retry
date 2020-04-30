@@ -15,6 +15,7 @@ import pytest
 from retry.api import retry_call
 from retry.api import retry
 
+mock_sleep_time = []
 def mock_condition():
     class mockCondition():
         def acquire(self):
@@ -27,6 +28,7 @@ def mock_condition():
 
 
 def test_retry(monkeypatch):
+    global mock_sleep_time
     mock_sleep_time = [0]
 
     monkeypatch.setattr(threading, 'Condition', mock_condition)
@@ -78,6 +80,7 @@ def test_tries_minus1():
 
 
 def test_max_delay(monkeypatch):
+    global mock_sleep_time
     mock_sleep_time = [0]
 
     hit = [0]
@@ -101,6 +104,7 @@ def test_max_delay(monkeypatch):
 
 
 def test_fixed_jitter(monkeypatch):
+    global mock_sleep_time
     mock_sleep_time = [0]
 
     def mock_sleep(seconds):
