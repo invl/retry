@@ -41,7 +41,7 @@ def __retry_internal(f, exceptions=Exception, tries=-1, delay=0, max_delay=None,
             if logger is not None:
                 logger.warning('%s, retrying in %s seconds...', e, _delay)
              
-            # the three lines below, sleep.
+            # the three lines below, sleep _delay seconds.
             condition.acquire()
             condition.wait(_delay)
             condition.release()
@@ -57,7 +57,7 @@ def __retry_internal(f, exceptions=Exception, tries=-1, delay=0, max_delay=None,
 
 
 def retry(exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1, jitter=0, logger=logging_logger,
-         condition=threading.Condition):
+         condition=threading.Condition()):
     """Returns a retry decorator.
 
     :param exceptions: an exception or a tuple of exceptions to catch. default: Exception.
