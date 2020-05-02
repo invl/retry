@@ -31,6 +31,7 @@ class mockCondition():
 		logging_logger.warning('in wait')
 		mock_sleep_time[0] += seconds
 
+
 def test_retry(monkeypatch):
     global mock_sleep_time
     mock_sleep_time = [0]
