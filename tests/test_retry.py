@@ -1,12 +1,15 @@
 try:
     from unittest.mock import create_autospec
+    from unittest.mock import MagicMock
+    from unittest import mock
 except ImportError:
     from mock import create_autospec
-
-try:
-    from unittest.mock import MagicMock
-except ImportError:
     from mock import MagicMock
+    import mock
+
+
+
+import mock
 
 import threading
 
@@ -14,25 +17,32 @@ import pytest
 
 from retry.api import retry_call
 from retry.api import retry
+import retry.api
 
-mock_sleep_time = []
+mock_sleep_time = [0]
 def mock_condition():
+    logging_logger.warning('in mock condition')
     class mockCondition():
         def acquire(self):
-            pass
+            logging_logger.warning('in acquire')
+            return True
+			
         def release(self):
-            pass
+            logging_logger.warning('in release')
+            
         def wait(self, seconds):
+            logging_logger.warning('in wait')
             mock_sleep_time[0] += seconds
+    
+    logging_logger.warning('in mock condition, returning')
     return mockCondition()
 
 
-def test_retry(monkeypatch):
+def test_retry():
     global mock_sleep_time
     mock_sleep_time = [0]
 
-    monkeypatch.setattr(threading, 'Condition', mock_condition)
-
+    monkeypatch.setattr(retry.api.threading, 'Condition', mock_condition)
     hit = [0]
 
     tries = 5
@@ -83,14 +93,14 @@ def test_max_delay(monkeypatch):
     global mock_sleep_time
     mock_sleep_time = [0]
 
+    monkeypatch.setattr(retry.api.threading, 'Condition', mock_condition)
+
     hit = [0]
 
     tries = 5
     delay = 1
     backoff = 2
     max_delay = delay  # Never increase delay
-    
-    monkeypatch.setattr(threading, 'Condition', mock_condition)
 
     @retry(tries=tries, delay=delay, max_delay=max_delay, backoff=backoff)
     def f():
@@ -107,10 +117,7 @@ def test_fixed_jitter(monkeypatch):
     global mock_sleep_time
     mock_sleep_time = [0]
 
-    def mock_sleep(seconds):
-        mock_sleep_time[0] += seconds
-
-    monkeypatch.setattr(time, 'sleep', mock_sleep)
+    monkeypatch.setattr(retry.api.threading, 'Condition', mock_condition)
 
     hit = [0]
 
