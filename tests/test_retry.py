@@ -34,7 +34,7 @@ def mock_condition():
     return mockCondition()
 
 
-def test_retry():
+def test_retry(monkeypatch):
     global mock_sleep_time
     mock_sleep_time = [0]
 
