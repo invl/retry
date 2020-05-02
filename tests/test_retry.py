@@ -7,10 +7,6 @@ except ImportError:
     from mock import MagicMock
     import mock
 
-
-
-import mock
-
 import threading
 
 import pytest
