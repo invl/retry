@@ -27,7 +27,7 @@ def __retry_internal(f, exceptions=Exception, tries=-1, delay=0, max_delay=None,
                    default: retry.logging_logger. if None, logging is disabled.
     :param condition: a threading.Condition that has aquire / release and wait(n) methods. 
                    Used instead of time.sleep to bypass global interpreter lock (GIL).
-    :returns: the result of the f function.
+
     :returns: the result of the f function.
     """
     _tries, _delay = tries, delay
