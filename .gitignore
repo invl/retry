@@ -34,3 +34,6 @@ sdist/
 target/
 var/
 __pycache__/
+
+# Environments
+venv/
