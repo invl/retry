@@ -10,7 +10,7 @@ from .compat import decorator
 logging_logger = logging.getLogger(__name__)
 
 
-def __retry_internal(f, exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1, jitter=0,
+def __retry_internal(f, exceptions=Exception, tries=-1, delay=0.0, max_delay=None, backoff=1.0, jitter=0.0,
                      logger=logging_logger):
     """
     Executes a function and retries it if it failed.
@@ -18,10 +18,10 @@ def __retry_internal(f, exceptions=Exception, tries=-1, delay=0, max_delay=None,
     :param f: the function to execute.
     :param exceptions: an exception or a tuple of exceptions to catch. default: Exception.
     :param tries: the maximum number of attempts. default: -1 (infinite).
-    :param delay: initial delay between attempts. default: 0.
+    :param delay: initial delay (seconds) between attempts. default: 0.0 seconds.
     :param max_delay: the maximum value of delay. default: None (no limit).
-    :param backoff: multiplier applied to delay between attempts. default: 1 (no backoff).
-    :param jitter: extra seconds added to delay between attempts. default: 0.
+    :param backoff: multiplier applied to delay between attempts. default: 1.0 (no backoff).
+    :param jitter: extra seconds added to delay between attempts. default: 0.0 seconds.
                    fixed if a number, random if a range tuple (min, max)
     :param logger: logger.warning(fmt, error, delay) will be called on failed attempts.
                    default: retry.logging_logger. if None, logging is disabled.
@@ -51,15 +51,15 @@ def __retry_internal(f, exceptions=Exception, tries=-1, delay=0, max_delay=None,
                 _delay = min(_delay, max_delay)
 
 
-def retry(exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1, jitter=0, logger=logging_logger):
+def retry(exceptions=Exception, tries=-1, delay=0.0, max_delay=None, backoff=1.0, jitter=0.0, logger=logging_logger):
     """Returns a retry decorator.
 
     :param exceptions: an exception or a tuple of exceptions to catch. default: Exception.
     :param tries: the maximum number of attempts. default: -1 (infinite).
-    :param delay: initial delay between attempts. default: 0.
+    :param delay: initial delay (seconds) between attempts. default: 0.0 seconds.
     :param max_delay: the maximum value of delay. default: None (no limit).
-    :param backoff: multiplier applied to delay between attempts. default: 1 (no backoff).
-    :param jitter: extra seconds added to delay between attempts. default: 0.
+    :param backoff: multiplier applied to delay between attempts. default: 1.0 (no backoff).
+    :param jitter: extra seconds added to delay between attempts. default: 0.0 seconds.
                    fixed if a number, random if a range tuple (min, max)
     :param logger: logger.warning(fmt, error, delay) will be called on failed attempts.
                    default: retry.logging_logger. if None, logging is disabled.
@@ -76,8 +76,8 @@ def retry(exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1, ji
     return retry_decorator
 
 
-def retry_call(f, fargs=None, fkwargs=None, exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1,
-               jitter=0,
+def retry_call(f, fargs=None, fkwargs=None, exceptions=Exception, tries=-1, delay=0.0, max_delay=None, backoff=1.0,
+               jitter=0.0,
                logger=logging_logger):
     """
     Calls a function and re-executes it if it failed.
@@ -87,10 +87,10 @@ def retry_call(f, fargs=None, fkwargs=None, exceptions=Exception, tries=-1, dela
     :param fkwargs: the named arguments of the function to execute.
     :param exceptions: an exception or a tuple of exceptions to catch. default: Exception.
     :param tries: the maximum number of attempts. default: -1 (infinite).
-    :param delay: initial delay between attempts. default: 0.
+    :param delay: initial delay (seconds) between attempts. default: 0.0 seconds.
     :param max_delay: the maximum value of delay. default: None (no limit).
-    :param backoff: multiplier applied to delay between attempts. default: 1 (no backoff).
-    :param jitter: extra seconds added to delay between attempts. default: 0.
+    :param backoff: multiplier applied to delay between attempts. default: 1.0 (no backoff).
+    :param jitter: extra seconds added to delay between attempts. default: 0.0 seconds.
                    fixed if a number, random if a range tuple (min, max)
     :param logger: logger.warning(fmt, error, delay) will be called on failed attempts.
                    default: retry.logging_logger. if None, logging is disabled.
