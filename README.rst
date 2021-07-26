@@ -1,18 +1,20 @@
-retry
-=====
+retry2
+======
 
 .. image:: https://img.shields.io/pypi/dm/retry.svg?maxAge=2592000
-        :target: https://pypi.python.org/pypi/retry/
+        :target: https://pypi.python.org/pypi/retry2/
 
 .. image:: https://img.shields.io/pypi/v/retry.svg?maxAge=2592000
-        :target: https://pypi.python.org/pypi/retry/
+        :target: https://pypi.python.org/pypi/retry2/
 
-.. image:: https://img.shields.io/pypi/l/retry.svg?maxAge=2592000
-        :target: https://pypi.python.org/pypi/retry/
+.. image:: https://img.shields.io/pypi/l/retry2.svg?maxAge=2592000
+        :target: https://pypi.python.org/pypi/retry2/
 
 
 Easy to use retry decorator.
 
+
+[This is a fork of https://github.com/invl/retry which is not maintained anymore]
 
 Features
 --------
@@ -27,7 +29,7 @@ Installation
 
 .. code-block:: bash
 
-    $ pip install retry
+    $ pip install retry2
 
 
 API
