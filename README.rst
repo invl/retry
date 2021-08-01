@@ -48,6 +48,7 @@ retry decorator
         :param backoff: multiplier applied to delay between attempts. default: 1 (no backoff).
         :param jitter: extra seconds added to delay between attempts. default: 0.
                        fixed if a number, random if a range tuple (min, max)
+        :param show_traceback: Print traceback before retrying (Python3 only). default: False.
         :param logger: logger.warning(fmt, error, delay) will be called on failed attempts.
                        default: retry.logging_logger. if None, logging is disabled.
         """
@@ -122,6 +123,7 @@ retry_call
         :param backoff: multiplier applied to delay between attempts. default: 1 (no backoff).
         :param jitter: extra seconds added to delay between attempts. default: 0.
                        fixed if a number, random if a range tuple (min, max)
+        :param show_traceback: Print traceback before retrying (Python3 only). default: False.
         :param logger: logger.warning(fmt, error, delay) will be called on failed attempts.
                        default: retry.logging_logger. if None, logging is disabled.
         :returns: the result of the f function.

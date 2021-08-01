@@ -1,17 +1,17 @@
 import logging
 import random
+import sys
 import time
-
+import traceback
 from functools import partial
 
 from .compat import decorator
-
 
 logging_logger = logging.getLogger(__name__)
 
 
 def __retry_internal(f, exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1, jitter=0,
-                     logger=logging_logger):
+                     show_traceback=False, logger=logging_logger):
     """
     Executes a function and retries it if it failed.
 
@@ -36,7 +36,12 @@ def __retry_internal(f, exceptions=Exception, tries=-1, delay=0, max_delay=None,
             if not _tries:
                 raise
 
+            assert not show_traceback or logger is not None, 'Show traceback needs logger'
+            assert not show_traceback or sys.version_info[0] != 2, 'Traceback not supported in Python2'
             if logger is not None:
+                if show_traceback:
+                    tb_str = ''.join(traceback.format_exception(None, e, e.__traceback__))
+                    logger.warning(tb_str)
                 logger.warning('%s, retrying in %s seconds...', e, _delay)
 
             time.sleep(_delay)
@@ -51,7 +56,7 @@ def __retry_internal(f, exceptions=Exception, tries=-1, delay=0, max_delay=None,
                 _delay = min(_delay, max_delay)
 
 
-def retry(exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1, jitter=0, logger=logging_logger):
+def retry(exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1, jitter=0, show_traceback=False, logger=logging_logger):
     """Returns a retry decorator.
 
     :param exceptions: an exception or a tuple of exceptions to catch. default: Exception.
@@ -71,13 +76,13 @@ def retry(exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1, ji
         args = fargs if fargs else list()
         kwargs = fkwargs if fkwargs else dict()
         return __retry_internal(partial(f, *args, **kwargs), exceptions, tries, delay, max_delay, backoff, jitter,
-                                logger)
+                                show_traceback, logger)
 
     return retry_decorator
 
 
 def retry_call(f, fargs=None, fkwargs=None, exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1,
-               jitter=0,
+               jitter=0, show_traceback=False,
                logger=logging_logger):
     """
     Calls a function and re-executes it if it failed.
@@ -98,4 +103,4 @@ def retry_call(f, fargs=None, fkwargs=None, exceptions=Exception, tries=-1, dela
     """
     args = fargs if fargs else list()
     kwargs = fkwargs if fkwargs else dict()
-    return __retry_internal(partial(f, *args, **kwargs), exceptions, tries, delay, max_delay, backoff, jitter, logger)
+    return __retry_internal(partial(f, *args, **kwargs), exceptions, tries, delay, max_delay, backoff, jitter, show_traceback, logger)
