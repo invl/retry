@@ -34,10 +34,12 @@ def __retry_internal(f, exceptions=Exception, tries=-1, delay=0, max_delay=None,
         except exceptions as e:
             _tries -= 1
             if not _tries:
+                if logger is not None and tries > 1:
+                    logger.warning('%s, attempt %s/%s failed - giving up!', e, tries - _tries, tries)
                 raise
 
             if logger is not None:
-                logger.warning('%s, retrying in %s seconds...', e, _delay)
+                logger.warning('%s, attempt %s/%s failed - retrying in %s seconds...', e, tries - _tries, tries, _delay)
 
             time.sleep(_delay)
             _delay *= backoff
