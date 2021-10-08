@@ -183,3 +183,14 @@ def test_retry_call_with_kwargs():
 
     assert result == kwargs['value']
     assert f_mock.call_count == 1
+
+
+def test_call_on_exception():
+    exception = RuntimeError()
+    f_mock = MagicMock(side_effect=exception)
+    callback_mock = MagicMock()
+    try:
+        retry_call(f_mock, tries=1, on_exception=callback_mock)
+    except RuntimeError:
+        pass
+    callback_mock.assert_called_once_with(exception)

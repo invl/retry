@@ -1,6 +1,10 @@
 CHANGES
 =======
 
+0.9.3
+
+* Add on_exception parameter that allows adding callback that will be called when exception is captured.
+
 0.9.2
 -----
 
