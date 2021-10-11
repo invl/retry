@@ -1,18 +1,20 @@
-retry
-=====
+retry2
+======
 
 .. image:: https://img.shields.io/pypi/dm/retry.svg?maxAge=2592000
-        :target: https://pypi.python.org/pypi/retry/
+        :target: https://pypi.python.org/pypi/retry2/
 
 .. image:: https://img.shields.io/pypi/v/retry.svg?maxAge=2592000
-        :target: https://pypi.python.org/pypi/retry/
+        :target: https://pypi.python.org/pypi/retry2/
 
-.. image:: https://img.shields.io/pypi/l/retry.svg?maxAge=2592000
-        :target: https://pypi.python.org/pypi/retry/
+.. image:: https://img.shields.io/pypi/l/retry2.svg?maxAge=2592000
+        :target: https://pypi.python.org/pypi/retry2/
 
 
 Easy to use retry decorator.
 
+
+[This is a fork of https://github.com/invl/retry which is not maintained anymore]
 
 Features
 --------
@@ -27,7 +29,7 @@ Installation
 
 .. code-block:: bash
 
-    $ pip install retry
+    $ pip install retry2
 
 
 API
@@ -51,8 +53,9 @@ retry decorator
                        fixed if a number, random if a range tuple (min, max)
         :param logger: logger.warning(fmt, error, delay) will be called on failed attempts.
                        default: retry.logging_logger. if None, logging is disabled.
-        :param on_exception: callback called when exception occurs. will be passed the captured
-                             exception as an argument. default: None
+        :param on_exception: handler called when exception occurs. will be passed the captured
+                             exception as an argument. further retries are stopped when handler
+                             returns True. default: None
         """
 
 Various retrying logic can be achieved by combination of arguments.
@@ -126,8 +129,9 @@ retry_call
                        fixed if a number, random if a range tuple (min, max)
         :param logger: logger.warning(fmt, error, delay) will be called on failed attempts.
                        default: retry.logging_logger. if None, logging is disabled.
-        :param on_exception: callback called when exception occurs. will be passed the captured
-                             exception as an argument. default: None
+        :param on_exception: handler called when exception occurs. will be passed the captured
+                             exception as an argument. further retries are stopped when handler
+                             returns True. default: None
         :returns: the result of the f function.
         """
 

@@ -1,3 +1,7 @@
+import logging
+from io import StringIO
+from uuid import uuid1
+
 try:
     from unittest.mock import create_autospec
 except ImportError:
@@ -53,6 +57,7 @@ def test_tries_inf():
             return target
         else:
             raise ValueError
+
     assert f() == target
 
 
@@ -67,6 +72,7 @@ def test_tries_minus1():
             return target
         else:
             raise ValueError
+
     assert f() == target
 
 
@@ -146,7 +152,6 @@ def test_retry_call_2():
 
 
 def test_retry_call_with_args():
-
     def f(value=0):
         if value < 0:
             return value
@@ -166,7 +171,6 @@ def test_retry_call_with_args():
 
 
 def test_retry_call_with_kwargs():
-
     def f(value=0):
         if value < 0:
             return value
@@ -194,3 +198,41 @@ def test_call_on_exception():
     except RuntimeError:
         pass
     callback_mock.assert_called_once_with(exception)
+
+
+def test_logs_function_details(monkeypatch):
+    mock_sleep_time = [0]
+
+    def mock_sleep(seconds):
+        mock_sleep_time[0] += seconds
+
+    monkeypatch.setattr(time, 'sleep', mock_sleep)
+
+    hit = [0]
+
+    tries = 3
+    fails = 2
+    delay = 1
+    backoff = 2
+    max_delay = delay  # Never increase delay
+    logger_name = str(uuid1())
+    logger = logging.getLogger(logger_name)
+    logger.setLevel(logging.WARNING)
+    logging_stream = StringIO()
+    handler = logging.StreamHandler(logging_stream)
+    logger.addHandler(handler)
+
+    @retry(exceptions=ZeroDivisionError, tries=tries, delay=delay, max_delay=max_delay, backoff=backoff, logger=logger,
+           log_traceback=True)
+    def f():
+        hit[0] += 1
+        if hit[0] <= fails:
+            1 / 0
+
+    f()
+    log_value = logging_stream.getvalue()
+    assert log_value.startswith(
+        "ZeroDivisionError: division by zero in test_retry.test_logs_function_details.<locals>.f, retrying in 1 seconds...")
+    assert log_value.endswith("ZeroDivisionError: division by zero\n\n")
+    assert hit[0] == fails + 1
+    assert mock_sleep_time[0] == delay * fails
