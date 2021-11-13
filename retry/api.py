@@ -4,14 +4,15 @@ import time
 
 from functools import partial
 
-from .compat import decorator
+from compat import decorator
 
 
 logging_logger = logging.getLogger(__name__)
 
 
+
 def __retry_internal(f, exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1, jitter=0,
-                     logger=logging_logger):
+                     logger=logging_logger, retry_on_results=[]):
     """
     Executes a function and retries it if it failed.
 
@@ -30,7 +31,10 @@ def __retry_internal(f, exceptions=Exception, tries=-1, delay=0, max_delay=None,
     _tries, _delay = tries, delay
     while _tries:
         try:
-            return f()
+            result = f()
+            if result in retry_on_results:
+                raise Exception
+            return result
         except exceptions as e:
             _tries -= 1
             if not _tries:
@@ -51,7 +55,7 @@ def __retry_internal(f, exceptions=Exception, tries=-1, delay=0, max_delay=None,
                 _delay = min(_delay, max_delay)
 
 
-def retry(exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1, jitter=0, logger=logging_logger):
+def retry(exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1, jitter=0, logger=logging_logger, retry_on_results=[]):
     """Returns a retry decorator.
 
     :param exceptions: an exception or a tuple of exceptions to catch. default: Exception.
@@ -71,7 +75,7 @@ def retry(exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1, ji
         args = fargs if fargs else list()
         kwargs = fkwargs if fkwargs else dict()
         return __retry_internal(partial(f, *args, **kwargs), exceptions, tries, delay, max_delay, backoff, jitter,
-                                logger)
+                                logger, retry_on_results)
 
     return retry_decorator
 
