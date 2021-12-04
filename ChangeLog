@@ -1,6 +1,12 @@
 CHANGES
 =======
 
+0.9.4
+-----
+
+* Add on_exception parameter accepting a handler called when exception is captured.
+  The callback can also be used to handle the exception and interrupt further retries.
+
 0.9.3
 -----
 

@@ -10,7 +10,7 @@ logging_logger = logging.getLogger(__name__)
 
 
 def __retry_internal(f, exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1, jitter=0,
-                     logger=logging_logger, log_traceback=False):
+                     logger=logging_logger, log_traceback=False, on_exception=None):
     """
     Executes a function and retries it if it failed.
 
@@ -24,6 +24,9 @@ def __retry_internal(f, exceptions=Exception, tries=-1, delay=0, max_delay=None,
                    fixed if a number, random if a range tuple (min, max)
     :param logger: logger.warning(fmt, error, delay) will be called on failed attempts.
                    default: retry.logging_logger. if None, logging is disabled.
+    :param on_exception: handler called when exception occurs. will be passed the captured
+                         exception as an argument. further retries are stopped when handler
+                         returns True. default: None
     :returns: the result of the f function.
     """
     _tries, _delay = tries, delay
@@ -31,6 +34,10 @@ def __retry_internal(f, exceptions=Exception, tries=-1, delay=0, max_delay=None,
         try:
             return f()
         except exceptions as e:
+            if on_exception is not None:
+                if on_exception(e):
+                    break
+
             _tries -= 1
             if not _tries:
                 raise
@@ -58,7 +65,7 @@ def __retry_internal(f, exceptions=Exception, tries=-1, delay=0, max_delay=None,
 
 
 def retry(exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1, jitter=0, logger=logging_logger,
-          log_traceback=False):
+          log_traceback=False, on_exception=None):
     """Returns a retry decorator.
 
     :param exceptions: an exception or a tuple of exceptions to catch. default: Exception.
@@ -70,6 +77,9 @@ def retry(exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1, ji
                    fixed if a number, random if a range tuple (min, max)
     :param logger: logger.warning(fmt, error, delay) will be called on failed attempts.
                    default: retry.logging_logger. if None, logging is disabled.
+    :param on_exception: handler called when exception occurs. will be passed the captured
+                         exception as an argument. further retries are stopped when handler
+                         returns True. default: None
     :returns: a retry decorator.
     """
 
@@ -78,13 +88,13 @@ def retry(exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1, ji
         args = fargs if fargs else list()
         kwargs = fkwargs if fkwargs else dict()
         return __retry_internal(partial(f, *args, **kwargs), exceptions, tries, delay, max_delay, backoff, jitter,
-                                logger, log_traceback=log_traceback)
+                                logger, log_traceback, on_exception)
 
     return retry_decorator
 
 
 def retry_call(f, fargs=None, fkwargs=None, exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1,
-               jitter=0, logger=logging_logger, log_traceback=False):
+               jitter=0, logger=logging_logger, log_traceback=False, on_exception=None):
     """
     Calls a function and re-executes it if it failed.
 
@@ -100,9 +110,12 @@ def retry_call(f, fargs=None, fkwargs=None, exceptions=Exception, tries=-1, dela
                    fixed if a number, random if a range tuple (min, max)
     :param logger: logger.warning(fmt, error, delay) will be called on failed attempts.
                    default: retry.logging_logger. if None, logging is disabled.
+    :param on_exception: handler called when exception occurs. will be passed the captured
+                         exception as an argument. further retries are stopped when handler
+                         returns True. default: None
     :returns: the result of the f function.
     """
     args = fargs if fargs else list()
     kwargs = fkwargs if fkwargs else dict()
     return __retry_internal(partial(f, *args, **kwargs), exceptions, tries, delay, max_delay, backoff, jitter, logger,
-                            log_traceback=log_traceback)
+                            log_traceback, on_exception)
