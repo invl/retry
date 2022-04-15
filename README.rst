@@ -90,7 +90,7 @@ Examples
 
     @retry(ValueError, delay=1, jitter=1)
     def make_trouble():
-        '''Retry on ValueError, sleep 1, 2, 3, 4, ... seconds between attempts.'''
+        '''Retry on ValueError, sleep 2 seconds between attempts.'''
 
 .. code:: python
 
@@ -151,7 +151,7 @@ This is very similar to the decorator, except that it takes a function and its a
         else:
             # skeptical
             tries = -1
-        result = retry_call(make_trouble, fargs=["http://ipinfo.io/"], fkwargs={"info": "ip"}, tries=tries)
+        result = retry_call(make_trouble, fargs=("http://ipinfo.io/",), fkwargs={"info": "ip"}, tries=tries)
         print(result)
 
     what_is_my_ip("conservative")
