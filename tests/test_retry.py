@@ -12,8 +12,7 @@ import time
 
 import pytest
 
-from reretry.api import retry_call
-from reretry.api import retry
+from reretry.api import retry, retry_call
 
 
 def test_retry(monkeypatch):
