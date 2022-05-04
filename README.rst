@@ -13,13 +13,22 @@ retry
 
 Easy to use retry decorator.
 
+This package is a fork from the `retry package <https://github.com/invl/retry>`_, with a lot of added community-sourced features.
+
 
 Features
 --------
 
-- No external dependency (stdlib only).
+- Retry on specific exceptions.
+- Set a maximum number of retries.
+- Set a delay between retries.
+- Set a maximum delay between retries.
+- Set backoff and jitter parameters.
+- Show traceback of an error that lead to a failed attempt.
+- Use a custom logger.
+- Call a custom callback after each failed attempt.
+- No external dependencies (stdlib only).
 - (Optionally) Preserve function signatures (`pip install decorator`).
-- Original traceback, easy to debug.
 
 
 Installation
