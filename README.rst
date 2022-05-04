@@ -38,8 +38,10 @@ retry decorator
 
 .. code:: python
 
-    def retry(exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1,
-              jitter=0, show_traceback=False, logger=logging_logger, fail_callback=None):
+    def retry(
+        exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1,
+        jitter=0, show_traceback=False, logger=logging_logger, fail_callback=None
+    ):
         """Return a retry decorator.
 
         :param exceptions: an exception or a tuple of exceptions to catch. default: Exception.
@@ -75,7 +77,8 @@ Examples
 
     @retry(ZeroDivisionError, tries=3, delay=2)
     def make_trouble():
-        '''Retry on ZeroDivisionError, raise error after 3 attempts, sleep 2 seconds between attempts.'''
+        '''Retry on ZeroDivisionError, raise error after 3 attempts,
+        sleep 2 seconds between attempts.'''
 
 .. code:: python
 
@@ -109,8 +112,11 @@ retry_call
 
 .. code:: python
 
-    def retry_call(f, fargs=None, fkwargs=None, exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1,
-                   jitter=0, show_traceback=False, logger=logging_logger, fail_callback=None):
+    def retry_call(
+        f, fargs=None, fkwargs=None, exceptions=Exception, tries=-1, delay=0,
+        max_delay=None, backoff=1, jitter=0, show_traceback=False, logger=logging_logger,
+        fail_callback=None
+    ):
         """
         Calls a function and re-executes it if it failed.
 
@@ -155,7 +161,12 @@ This is very similar to the decorator, except that it takes a function and its a
         else:
             # skeptical
             tries = -1
-        result = retry_call(make_trouble, fargs=["http://ipinfo.io/"], fkwargs={"info": "ip"}, tries=tries)
+        result = retry_call(
+            make_trouble,
+            fargs=["http://ipinfo.io/"],
+            fkwargs={"info": "ip"},
+            tries=tries
+        )
         print(result)
 
     what_is_my_ip("conservative")
