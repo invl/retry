@@ -43,8 +43,8 @@ retry decorator
 
         :param exceptions: an exception or a tuple of exceptions to catch. default: Exception.
         :param tries: the maximum number of attempts. default: -1 (infinite).
-        :param delay: initial delay between attempts. default: 0.
-        :param max_delay: the maximum value of delay. default: None (no limit).
+        :param delay: initial delay between attempts (in seconds). default: 0.
+        :param max_delay: the maximum value of delay (in seconds). default: None (no limit).
         :param backoff: multiplier applied to delay between attempts. default: 1 (no backoff).
         :param jitter: extra seconds added to delay between attempts. default: 0.
                        fixed if a number, random if a range tuple (min, max)
@@ -118,8 +118,8 @@ retry_call
         :param fkwargs: the named arguments of the function to execute.
         :param exceptions: an exception or a tuple of exceptions to catch. default: Exception.
         :param tries: the maximum number of attempts. default: -1 (infinite).
-        :param delay: initial delay between attempts. default: 0.
-        :param max_delay: the maximum value of delay. default: None (no limit).
+        :param delay: initial delay between attempts (in seconds). default: 0.
+        :param max_delay: the maximum value of delay (in seconds). default: None (no limit).
         :param backoff: multiplier applied to delay between attempts. default: 1 (no backoff).
         :param jitter: extra seconds added to delay between attempts. default: 0.
                        fixed if a number, random if a range tuple (min, max)
