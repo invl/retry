@@ -34,3 +34,4 @@ sdist/
 target/
 var/
 __pycache__/
+.vscode/
