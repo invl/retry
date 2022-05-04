@@ -1,14 +1,14 @@
 retry
 =====
 
-.. image:: https://img.shields.io/pypi/dm/retry.svg?maxAge=2592000
-        :target: https://pypi.python.org/pypi/retry/
+.. image:: https://img.shields.io/pypi/dm/reretry.svg?maxAge=2592000
+        :target: https://pypi.python.org/pypi/reretry/
 
-.. image:: https://img.shields.io/pypi/v/retry.svg?maxAge=2592000
-        :target: https://pypi.python.org/pypi/retry/
+.. image:: https://img.shields.io/pypi/v/reretry.svg?maxAge=2592000
+        :target: https://pypi.python.org/pypi/reretry/
 
-.. image:: https://img.shields.io/pypi/l/retry.svg?maxAge=2592000
-        :target: https://pypi.python.org/pypi/retry/
+.. image:: https://img.shields.io/pypi/l/reretry.svg?maxAge=2592000
+        :target: https://pypi.python.org/pypi/reretry/
 
 
 Easy to use retry decorator.
@@ -27,7 +27,7 @@ Installation
 
 .. code-block:: bash
 
-    $ pip install retry
+    $ pip install reretry
 
 
 API
@@ -38,7 +38,8 @@ retry decorator
 
 .. code:: python
 
-    def retry(exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1, jitter=0, logger=logging_logger):
+    def retry(exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1,
+              jitter=0, show_traceback=False, logger=logging_logger, fail_callback=None):
         """Return a retry decorator.
 
         :param exceptions: an exception or a tuple of exceptions to catch. default: Exception.
@@ -51,6 +52,7 @@ retry decorator
         :param show_traceback: Print traceback before retrying (Python3 only). default: False.
         :param logger: logger.warning(fmt, error, delay) will be called on failed attempts.
                        default: retry.logging_logger. if None, logging is disabled.
+        :param fail_callback: fail_callback(e) will be called on failed attempts.
         """
 
 Various retrying logic can be achieved by combination of arguments.
@@ -61,7 +63,7 @@ Examples
 
 .. code:: python
 
-    from retry import retry
+    from reretry import retry
 
 .. code:: python
 
@@ -108,8 +110,7 @@ retry_call
 .. code:: python
 
     def retry_call(f, fargs=None, fkwargs=None, exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1,
-                   jitter=0,
-                   logger=logging_logger):
+                   jitter=0, show_traceback=False, logger=logging_logger, fail_callback=None):
         """
         Calls a function and re-executes it if it failed.
 
@@ -126,6 +127,7 @@ retry_call
         :param show_traceback: Print traceback before retrying (Python3 only). default: False.
         :param logger: logger.warning(fmt, error, delay) will be called on failed attempts.
                        default: retry.logging_logger. if None, logging is disabled.
+        :param fail_callback: fail_callback(e) will be called on failed attempts.
         :returns: the result of the f function.
         """
 
@@ -135,7 +137,7 @@ This is very similar to the decorator, except that it takes a function and its a
 
     import requests
 
-    from retry.api import retry_call
+    from reretry.api import retry_call
 
 
     def make_trouble(service, info=None):
@@ -157,6 +159,3 @@ This is very similar to the decorator, except that it takes a function and its a
         print(result)
 
     what_is_my_ip("conservative")
-
-
-
