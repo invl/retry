@@ -1,4 +1,4 @@
-__all__ = ['retry', 'retry_call']
+__all__ = ["retry", "retry_call"]
 
 import logging
 
