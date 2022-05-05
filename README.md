@@ -1,12 +1,12 @@
 # reretry
 
-![https://img.shields.io/pypi/dm/reretry.svg?maxAge=2592000](https://pypi.python.org/pypi/reretry/)
-![https://img.shields.io/pypi/v/reretry.svg?maxAge=2592000](https://pypi.python.org/pypi/reretry/)
-![https://img.shields.io/pypi/l/reretry.svg?maxAge=2592000](https://pypi.python.org/pypi/reretry/)
+![](https://img.shields.io/pypi/dm/reretry.svg?maxAge=2592000)
+![](https://img.shields.io/pypi/v/reretry.svg?maxAge=2592000)
+![](https://img.shields.io/pypi/l/reretry.svg?maxAge=2592000)
 
 An easy to use retry decorator.
 
-This package is a fork from the [`retry` package](https://github.com/invl/retry), but with some of added community-sourced features.
+This package is a fork from the [`retry`](https://github.com/invl/retry) package, but with some of added community-sourced features.
 
 
 ## Features
@@ -37,7 +37,7 @@ $ pip install reretry
 ### The @retry decorator
 
 #### Usage
->`@retry(exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1, jitter=0, show_traceback=False, logger=logging_logger, fail_callback=None)`
+`@retry(exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1, jitter=0, show_traceback=False, logger=logging_logger, fail_callback=None)`
 
 #### Arguments
 - `exceptions`: An exception or a tuple of exceptions to catch. Default: Exception.
@@ -111,7 +111,7 @@ Calls a function and re-executes it if it failed.
 This is very similar to the decorator, except that it takes a function and its arguments as parameters. The use case behind it is to be able to dynamically adjust the retry arguments.
 
 #### Usage
-> `retry_call(f, fargs=None, fkwargs=None, exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1, jitter=0, show_traceback=False, logger=logging_logger, fail_callback=None):`
+`retry_call(f, fargs=None, fkwargs=None, exceptions=Exception, tries=-1, delay=0, max_delay=None, backoff=1, jitter=0, show_traceback=False, logger=logging_logger, fail_callback=None)`
 
 #### Example
 ```python
