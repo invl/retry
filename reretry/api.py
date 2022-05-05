@@ -1,6 +1,5 @@
 import logging
 import random
-import sys
 import time
 import traceback
 from functools import partial
@@ -22,23 +21,8 @@ def __retry_internal(
     logger=logging_logger,
     fail_callback=None,
 ):
-    """
-    Executes a function and retries it if it failed.
-
-    :param f: the function to execute.
-    :param exceptions: an exception or a tuple of exceptions to catch. default: Exception.
-    :param tries: the maximum number of attempts. default: -1 (infinite).
-    :param delay: initial delay between attempts (in seconds). default: 0.
-    :param max_delay: the maximum value of delay (in seconds). default: None (no limit).
-    :param backoff: multiplier applied to delay between attempts. default: 1 (no backoff).
-    :param jitter: extra seconds added to delay between attempts. default: 0.
-                   fixed if a number, random if a range tuple (min, max)
-    :param logger: logger.warning(fmt, error, delay) will be called on failed attempts.
-                   default: retry.logging_logger. if None, logging is disabled.
-    :param fail_callback: fail_callback(e) will be called on failed attempts.
-    :returns: the result of the f function.
-    """
     _tries, _delay = tries, delay
+
     while _tries:
         try:
             return f()
@@ -46,47 +30,48 @@ def __retry_internal(
         except exceptions as e:
             _tries -= 1
 
+            if logger:
+                _log_attempt(tries, show_traceback, logger, _tries, _delay, e)
+
             if not _tries:
-                if logger is not None and tries > 1:
-                    logger.warning(
-                        "%s, attempt %s/%s failed - giving up!",
-                        e,
-                        tries - _tries,
-                        tries,
-                    )
                 raise
-
-            assert (
-                not show_traceback or logger is not None
-            ), "Show traceback needs logger"
-            assert (
-                not show_traceback or sys.version_info[0] != 2
-            ), "Traceback not supported in Python2"
-
-            if logger is not None:
-                if show_traceback:
-                    tb_str = "".join(
-                        traceback.format_exception(None, e, e.__traceback__)
-                    )
-                    logger.warning(tb_str)
-                logger.warning(
-                    "%s, attempt %s/%s failed - retrying in %s seconds...",
-                    e,
-                    tries - _tries,
-                    tries,
-                    _delay,
-                )
 
             if fail_callback is not None:
                 fail_callback(e)
 
             time.sleep(_delay)
-            _delay *= backoff
 
-            _delay += random.uniform(*jitter) if isinstance(jitter, tuple) else jitter
+            _delay = _new_delay(max_delay, backoff, jitter, _delay)
 
-            if max_delay is not None:
-                _delay = min(_delay, max_delay)
+
+def _log_attempt(tries, show_traceback, logger, _tries, _delay, e):
+    if _tries:
+        if show_traceback:
+            tb_str = "".join(traceback.format_exception(None, e, e.__traceback__))
+            logger.warning(tb_str)
+
+        logger.warning(
+            "%s, attempt %s/%s failed - retrying in %s seconds...",
+            e,
+            tries - _tries,
+            tries,
+            _delay,
+        )
+
+    elif tries > 1:
+        logger.warning(
+            "%s, attempt %s/%s failed - giving up!", e, tries - _tries, tries
+        )
+
+
+def _new_delay(max_delay, backoff, jitter, _delay):
+    _delay *= backoff
+    _delay += random.uniform(*jitter) if isinstance(jitter, tuple) else jitter
+
+    if max_delay is not None:
+        _delay = min(_delay, max_delay)
+
+    return _delay
 
 
 def retry(
@@ -109,6 +94,7 @@ def retry(
     :param backoff: multiplier applied to delay between attempts. default: 1 (no backoff).
     :param jitter: extra seconds added to delay between attempts. default: 0.
                    fixed if a number, random if a range tuple (min, max)
+    :param show_traceback: if True, the traceback of the exception will be logged.
     :param logger: logger.warning(fmt, error, delay) will be called on failed attempts.
                    default: retry.logging_logger. if None, logging is disabled.
     :param fail_callback: fail_callback(e) will be called on failed attempts.
@@ -119,6 +105,11 @@ def retry(
     def retry_decorator(f, *fargs, **fkwargs):
         args = fargs or list()
         kwargs = fkwargs or dict()
+
+        assert (
+            not show_traceback or logger is not None
+        ), "`show_traceback` needs `logger`"
+
         return __retry_internal(
             partial(f, *args, **kwargs),
             exceptions,
@@ -162,6 +153,7 @@ def retry_call(
     :param backoff: multiplier applied to delay between attempts. default: 1 (no backoff).
     :param jitter: extra seconds added to delay between attempts. default: 0.
                    fixed if a number, random if a range tuple (min, max)
+    :param show_traceback: if True, the traceback of the exception will be logged.
     :param logger: logger.warning(fmt, error, delay) will be called on failed attempts.
                    default: retry.logging_logger. if None, logging is disabled.
     :param fail_callback: fail_callback(e) will be called on failed attempts.
@@ -169,6 +161,9 @@ def retry_call(
     """
     args = fargs or list()
     kwargs = fkwargs or dict()
+
+    assert not show_traceback or logger is not None, "`show_traceback` needs `logger`"
+
     return __retry_internal(
         partial(f, *args, **kwargs),
         exceptions,
