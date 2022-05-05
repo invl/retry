@@ -19,18 +19,20 @@ This package is a fork from the `retry package <https://github.com/invl/retry>`_
 Features
 --------
 
+From original `retry`:
 - Retry on specific exceptions.
 - Set a maximum number of retries.
 - Set a delay between retries.
 - Set a maximum delay between retries.
 - Set backoff and jitter parameters.
-- Show traceback of an error that lead to a failed attempt.
 - Use a custom logger.
-- Call a custom callback after each failed attempt.
-- Can be used with async functions.
-
 - No external dependencies (stdlib only).
 - (Optionally) Preserve function signatures (`pip install decorator`).
+
+New features in `reretry`:
+- Log traceback of an error that lead to a failed attempt.
+- Call a custom callback after each failed attempt.
+- Can be used with async functions.
 
 
 Installation
