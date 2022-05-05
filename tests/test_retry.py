@@ -1,7 +1,4 @@
-try:
-    from unittest.mock import MagicMock, create_autospec
-except ImportError:
-    from mock import create_autospec, MagicMock
+from unittest.mock import MagicMock
 
 import asyncio
 import time
