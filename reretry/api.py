@@ -1,8 +1,11 @@
+import asyncio
 import logging
 import random
 import time
 import traceback
 from functools import partial
+
+import inspect
 
 from .compat import decorator
 
@@ -44,6 +47,41 @@ def __retry_internal(
             _delay = _new_delay(max_delay, backoff, jitter, _delay)
 
 
+async def __retry_internal_async(
+    f,
+    exceptions=Exception,
+    tries=-1,
+    delay=0,
+    max_delay=None,
+    backoff=1,
+    jitter=0,
+    show_traceback=False,
+    logger=logging_logger,
+    fail_callback=None,
+):
+    _tries, _delay = tries, delay
+
+    while _tries:
+        try:
+            return await f()
+
+        except exceptions as e:
+            _tries -= 1
+
+            if logger:
+                _log_attempt(tries, show_traceback, logger, _tries, _delay, e)
+
+            if not _tries:
+                raise
+
+            if fail_callback is not None:
+                await fail_callback(e)
+
+            await asyncio.sleep(_delay)
+
+            _delay = _new_delay(max_delay, backoff, jitter, _delay)
+
+
 def _log_attempt(tries, show_traceback, logger, _tries, _delay, e):
     if _tries:
         if show_traceback:
@@ -72,6 +110,23 @@ def _new_delay(max_delay, backoff, jitter, _delay):
         _delay = min(_delay, max_delay)
 
     return _delay
+
+
+def _is_async(f):
+    return asyncio.iscoroutinefunction(f) and not inspect.isgeneratorfunction(f)
+
+
+def _get_internal_function(f):
+    return __retry_internal_async if _is_async(f) else __retry_internal
+
+
+def _check_params(f, show_traceback=False, logger=logging_logger, fail_callback=None):
+    assert not show_traceback or logger is not None, "`show_traceback` needs `logger`"
+
+    assert not fail_callback or (
+        (_is_async(f) and _is_async(fail_callback))
+        or (not _is_async(f) and not _is_async(fail_callback))
+    ), "If the retried function is async, fail_callback needs to be async as well or vice versa"
 
 
 def retry(
@@ -103,15 +158,10 @@ def retry(
 
     @decorator
     def retry_decorator(f, *fargs, **fkwargs):
-        args = fargs or list()
-        kwargs = fkwargs or dict()
-
-        assert (
-            not show_traceback or logger is not None
-        ), "`show_traceback` needs `logger`"
-
-        return __retry_internal(
-            partial(f, *args, **kwargs),
+        return retry_call(
+            f,
+            fargs,
+            fkwargs,
             exceptions,
             tries,
             delay,
@@ -162,9 +212,10 @@ def retry_call(
     args = fargs or list()
     kwargs = fkwargs or dict()
 
-    assert not show_traceback or logger is not None, "`show_traceback` needs `logger`"
+    _check_params(f, show_traceback, logger, fail_callback)
 
-    return __retry_internal(
+    func = _get_internal_function(f)
+    return func(
         partial(f, *args, **kwargs),
         exceptions,
         tries,
