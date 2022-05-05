@@ -191,7 +191,7 @@ def test_retry_call_with_fail_callback():
     except RuntimeError:
         pass
 
-    callback_mock.assert_called()
+    assert callback_mock.called
 
 
 def test_is_async():
