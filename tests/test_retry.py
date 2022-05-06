@@ -36,7 +36,7 @@ def test_retry(monkeypatch):
     global mock_sleep_time
     mock_sleep_time = [0]
 
-    monkeypatch.setattr(retry.api.threading, 'Condition', mockCondition)
+    monkeypatch.setattr(retry.api.threading.Condition, 'threading.Condition', mockCondition)
     hit = [0]
 
     tries = 5
@@ -86,7 +86,7 @@ def test_max_delay(monkeypatch):
     global mock_sleep_time
     mock_sleep_time = [0]
 
-    monkeypatch.setattr(retry.api.threading, 'Condition', mockCondition)
+    monkeypatch.setattr(retry.api.threading.Condition, 'threading.Condition', mockCondition)
 
     hit = [0]
 
@@ -110,7 +110,7 @@ def test_fixed_jitter(monkeypatch):
     global mock_sleep_time
     mock_sleep_time = [0]
 
-    monkeypatch.setattr(retry.api.threading, 'Condition', mockCondition)
+    monkeypatch.setattr(retry.api.threading.Condition, 'threading.Condition', mockCondition)
 
     hit = [0]
 
