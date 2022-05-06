@@ -124,6 +124,8 @@ retry_call
                        fixed if a number, random if a range tuple (min, max)
         :param logger: logger.warning(fmt, error, delay) will be called on failed attempts.
                        default: retry.logging_logger. if None, logging is disabled.
+        :param condition: threading.Condition or multiprocessing.Condition or any construct that 
+                    has acquire(), release() and wait(n)
         :returns: the result of the f function.
         """
 
