@@ -1,7 +1,6 @@
 import asyncio
 import logging
 import random
-import time
 import traceback
 import threading
 from functools import partial
@@ -12,6 +11,16 @@ from .compat import decorator
 
 logging_logger = logging.getLogger(__name__)
 
+class ConditionRelease(object):
+    def __init__(self, c):
+        self.c = c
+    def __enter__(self):
+        self.c.acquire()
+        return self
+    def wait(self, n):
+        self.c.wait(n)
+    def __exit__(self, exc_type, exc_value, exc_tb):
+        self.c.release()
 
 def __retry_internal(
     f,
@@ -24,6 +33,7 @@ def __retry_internal(
     show_traceback=False,
     logger=logging_logger,
     fail_callback=None,
+    condition=None,
 ):
     _tries, _delay = tries, delay
 
@@ -43,7 +53,9 @@ def __retry_internal(
             if fail_callback is not None:
                 fail_callback(e)
 
-            time.sleep(_delay)
+            with ConditionRelease(condition) as _condition:
+                print('_condtion:', _condition)
+                _condition.wait(_delay)
 
             _delay = _new_delay(max_delay, backoff, jitter, _delay)
 
@@ -140,6 +152,7 @@ def retry(
     show_traceback=False,
     logger=logging_logger,
     fail_callback=None,
+    condition=threading.Condition(),
 ):
     """Returns a retry decorator.
 
@@ -154,9 +167,13 @@ def retry(
     :param logger: logger.warning(fmt, error, delay) will be called on failed attempts.
                    default: retry.logging_logger. if None, logging is disabled.
     :param fail_callback: fail_callback(e) will be called on failed attempts.
+    :param condition: threading.Condition variable used to .wait, a default one is
+                    provided.  time.sleep is not used since it locks up all threads simultaneously.
+
     :returns: a retry decorator.
     """
 
+    print('-- condition:', condition)
     @decorator
     def retry_decorator(f, *fargs, **fkwargs):
         return retry_call(
@@ -172,6 +189,7 @@ def retry(
             show_traceback,
             logger,
             fail_callback,
+            condition=condition,
         )
 
     return retry_decorator
@@ -190,6 +208,7 @@ def retry_call(
     show_traceback=False,
     logger=logging_logger,
     fail_callback=None,
+    condition=None,
 ):
     """
     Calls a function and re-executes it if it failed.
@@ -208,23 +227,38 @@ def retry_call(
     :param logger: logger.warning(fmt, error, delay) will be called on failed attempts.
                    default: retry.logging_logger. if None, logging is disabled.
     :param fail_callback: fail_callback(e) will be called on failed attempts.
+    :param condition: threading.Condition variable used to .wait, a default one is
+                    provided.  time.sleep is not used since it locks up all threads simultaneously.
+
     :returns: the result of the f function.
     """
+    
     args = fargs or list()
     kwargs = fkwargs or dict()
 
     _check_params(f, show_traceback, logger, fail_callback)
 
     func = _get_internal_function(f)
+    args_list = []
+    path_through_args = dict(
+        exceptions=exceptions,
+        tries=tries,
+        delay=delay,
+        max_delay=max_delay,
+        backoff=backoff,
+        jitter=jitter,
+        show_traceback=show_traceback,
+        logger=logger,
+        fail_callback=fail_callback,
+    )
+    if hasattr(inspect, 'getfullargspec'):
+        args_list = inspect.getfullargspec(func).args
+    else:
+        args_list = inspect.getargspec(func).args
+
+    if 'condition' in args_list:
+        path_through_args['condition'] = condition
     return func(
         partial(f, *args, **kwargs),
-        exceptions,
-        tries,
-        delay,
-        max_delay,
-        backoff,
-        jitter,
-        show_traceback,
-        logger,
-        fail_callback,
+        **path_through_args,
     )
