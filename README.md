@@ -1,8 +1,8 @@
 # reretry
 
-![](https://img.shields.io/pypi/dm/reretry.svg?maxAge=2592000)
-![](https://img.shields.io/pypi/v/reretry.svg?maxAge=2592000)
-![](https://img.shields.io/pypi/l/reretry.svg?maxAge=2592000)
+![](https://github.com/leshchenko1979/reretry/workflows/build/badge.svg)
+[![codecov](https://codecov.io/gh/leshchenko1979/reretry/branch/master/graph/badge.svg)](https://codecov.io/gh/leshchenko1979/reretry)
+![](https://img.shields.io/pypi/dm/reretry.svg)
 
 An easy to use retry decorator.
 
