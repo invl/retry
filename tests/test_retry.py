@@ -1,10 +1,9 @@
 from unittest.mock import MagicMock
 
-import asyncio
 import time
 
 import pytest
-from reretry.api import _is_async, retry, retry_call
+from reretry.api import retry, retry_call
 
 
 def test_retry(monkeypatch):
@@ -191,53 +190,16 @@ def test_retry_call_with_fail_callback():
     assert callback_mock.called
 
 
-def test_is_async():
-    async def async_func():
+def test_show_traceback():
+    logger = MagicMock()
+    logger.warning = MagicMock()
+
+    def f():
+        raise RuntimeError
+
+    try:
+        retry_call(f, show_traceback=True, logger=logger, tries=2)
+    except RuntimeError:
         pass
 
-    def non_async_func():
-        pass
-
-    def generator():
-        yield
-
-
-    assert _is_async(async_func)
-    assert not _is_async(non_async_func)
-    assert not _is_async(generator)
-    assert not _is_async(generator())
-    assert not _is_async(MagicMock(spec=non_async_func, return_value=-1))
-
-
-@pytest.mark.asyncio
-async def test_async():
-    attempts = 1
-    raised = False
-
-    @retry(tries=2)
-    async def f():
-        await asyncio.sleep(0.1)
-        nonlocal attempts, raised
-        if attempts:
-            raised = True
-            attempts -= 1
-            raise RuntimeError
-        return True
-
-    assert await f()
-    assert raised
-    assert attempts == 0
-
-
-def test_check_params():
-    with pytest.raises(AssertionError):
-        retry_call(lambda: None, show_traceback=True, logger=None)
-
-    async def async_func():
-        pass
-
-    def non_async_func():
-        pass
-
-    with pytest.raises(AssertionError):
-        retry_call(async_func, fail_callback=non_async_func)
+    assert logger.warning.called
