@@ -159,8 +159,8 @@ def test_retry_call_with_kwargs():
     def f(value=0):
         if value < 0:
             return value
-        else:
-            raise RuntimeError
+
+        raise RuntimeError
 
     kwargs = {"value": -1}
     result = None
