@@ -1,9 +1,9 @@
 # reretry
 
+![](https://img.shields.io/pypi/dm/reretry.svg)
 ![](https://github.com/leshchenko1979/reretry/workflows/build/badge.svg)
 [![codecov](https://codecov.io/gh/leshchenko1979/reretry/branch/master/graph/badge.svg)](https://codecov.io/gh/leshchenko1979/reretry)
-![](https://img.shields.io/pypi/dm/reretry.svg)
-
+[![CodeFactor](https://www.codefactor.io/repository/github/leshchenko1979/reretry/badge)](https://www.codefactor.io/repository/github/leshchenko1979/reretry)
 An easy to use retry decorator.
 
 This package is a fork from the [`retry`](https://github.com/invl/retry) package, but with some of added community-sourced features.
