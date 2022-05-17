@@ -1,4 +1,5 @@
 import asyncio
+from contextlib import contextmanager, AbstractContextManager, ExitStack
 import logging
 import random
 import traceback
@@ -11,16 +12,36 @@ from .compat import decorator
 
 logging_logger = logging.getLogger(__name__)
 
-class ConditionRelease(object):
+import inspect
+
+from .compat import decorator
+
+logging_logger = logging.getLogger(__name__)
+
+class ConditionWrappedWait(AbstractContextManager):
     def __init__(self, c):
         self.c = c
+
     def __enter__(self):
         self.c.acquire()
         return self
+
     def wait(self, n):
         self.c.wait(n)
+
+    @contextmanager
+    def _cleanup_on_error(self):
+        with ExitStack() as stack:
+            stack.push(self)
+            yield
+            # The validation check passed and didn't raise an exception
+            # Accordingly, we want to keep the resource, and pass it
+            # back to our caller
+            stack.pop_all()
+
     def __exit__(self, exc_type, exc_value, exc_tb):
         self.c.release()
+
 
 def __retry_internal(
     f,
@@ -53,8 +74,7 @@ def __retry_internal(
             if fail_callback is not None:
                 fail_callback(e)
 
-            with ConditionRelease(condition) as _condition:
-                print('_condtion:', _condition)
+            with ConditionWrappedWait(condition) as _condition:
                 _condition.wait(_delay)
 
             _delay = _new_delay(max_delay, backoff, jitter, _delay)
@@ -167,13 +187,11 @@ def retry(
     :param logger: logger.warning(fmt, error, delay) will be called on failed attempts.
                    default: retry.logging_logger. if None, logging is disabled.
     :param fail_callback: fail_callback(e) will be called on failed attempts.
-    :param condition: threading.Condition variable used to .wait, a default one is
+    :param condition: threading.Condition variable used to .wait, a default one is 
                     provided.  time.sleep is not used since it locks up all threads simultaneously.
-
     :returns: a retry decorator.
     """
 
-    print('-- condition:', condition)
     @decorator
     def retry_decorator(f, *fargs, **fkwargs):
         return retry_call(
@@ -227,9 +245,6 @@ def retry_call(
     :param logger: logger.warning(fmt, error, delay) will be called on failed attempts.
                    default: retry.logging_logger. if None, logging is disabled.
     :param fail_callback: fail_callback(e) will be called on failed attempts.
-    :param condition: threading.Condition variable used to .wait, a default one is
-                    provided.  time.sleep is not used since it locks up all threads simultaneously.
-
     :returns: the result of the f function.
     """
     
