@@ -47,8 +47,8 @@ def __retry_internal(f, exceptions=Exception, tries=-1, delay=0, max_delay=None,
                     func_qualname =  f.func.__qualname__
                 except AttributeError:
                     func_qualname = str(f.func)
-                logger.warning('%s: %s in %s.%s, retrying in %s seconds...', e.__class__.__qualname__, e,
-                               f.func.__module__, func_qualname, _delay)
+                logger.warning('{}: {} in {}.{}, retrying in {} seconds...'.format(e.__class__.__qualname__, e,
+                               f.func.__module__, func_qualname, _delay))
                 if log_traceback:
                     logger.warning(traceback.format_exc())
 
