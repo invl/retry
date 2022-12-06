@@ -1,9 +1,6 @@
 retry
 =====
 
-.. image:: https://img.shields.io/pypi/dm/retry.svg?maxAge=2592000
-        :target: https://pypi.python.org/pypi/retry/
-
 .. image:: https://img.shields.io/pypi/v/retry.svg?maxAge=2592000
         :target: https://pypi.python.org/pypi/retry/
 
