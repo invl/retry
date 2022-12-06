@@ -37,7 +37,7 @@ Installation
 
 .. code-block:: bash
 
-    $ pip install retry
+    $ pip install retry-sh
 
 
 API

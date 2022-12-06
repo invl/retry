@@ -2,10 +2,9 @@ import time
 import random
 import asyncio
 import logging
-
 from functools import partial
 
-from .compat import decorator
+from decorator import decorator
 
 
 logging_logger = logging.getLogger(__name__)

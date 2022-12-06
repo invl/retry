@@ -1,6 +1,27 @@
 CHANGES
 =======
 
+1.0.0
+-----
+* Drop support python 2.x
+* Update tests
+* Drop module compat.py
+* Rename library
+
+
+0.9.4
+-----
+* BugFix __retry_internal_async, had replaced function sleep to asyncio.sleep
+
+
+0.9.3
+-----
+* Add work with async function.
+
+
+0.9.2.1
+-------
+
 * Trim setup.py
 * Move NullHandler to .compat
 * Expose retry.retry\_call
@@ -9,13 +30,6 @@ CHANGES
 * Bump version
 * Fix badges
 
-0.9.4
------
-* BugFix __retry_internal_async, had replaced function sleep to asyncio.sleep
-
-0.9.3
------
-* Add work with async function.
 
 0.9.2
 -----

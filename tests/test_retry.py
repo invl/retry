@@ -1,15 +1,6 @@
-try:
-    from unittest.mock import create_autospec
-except ImportError:
-    from mock import create_autospec
-
-try:
-    from unittest.mock import MagicMock
-except ImportError:
-    from mock import MagicMock
-
 import time
 import asyncio
+from unittest.mock import MagicMock, create_autospec
 
 import pytest
 
@@ -195,16 +186,16 @@ def test_call_on_async_def():
         if value < 0:
             await asyncio.sleep(0.1)
             return value
-        else:
-            raise RuntimeError
+        raise RuntimeError
 
     loop = asyncio.get_event_loop()
+
+    # === 1
     result = loop.run_until_complete(testf(-1))
     assert result == -1
     assert hit[0] == 1
 
     # === 2
-
     try:
         hit = [0]
         result = loop.run_until_complete(testf(1))
