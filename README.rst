@@ -16,6 +16,13 @@ retry
 
 Easy to use retry decorator.
 
+Step side
+---------
+
+It's fork: https://github.com/invl/retry
+
+My changes had started from version 0.9.3 (see ChangeLog)
+
 
 Features
 --------
