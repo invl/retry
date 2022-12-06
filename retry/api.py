@@ -68,7 +68,7 @@ async def __retry_internal_async(f, exceptions=Exception, tries=-1, delay=0,
             if logger is not None:
                 logger.warning('%s, retrying in %s seconds...', e, _delay)
 
-            time.sleep(_delay)
+            await asyncio.sleep(_delay)
             _delay *= backoff
 
             if isinstance(jitter, tuple):
