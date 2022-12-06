@@ -59,7 +59,7 @@ async def __retry_internal_async(f, exceptions=Exception, tries=-1, delay=0,
     _tries, _delay = tries, delay
     while _tries:
         try:
-            return await f.func(*f.args, **f.keywords)
+            return await f()
         except exceptions as e:
             _tries -= 1
             if not _tries:

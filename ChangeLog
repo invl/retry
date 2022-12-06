@@ -9,6 +9,10 @@ CHANGES
 * Bump version
 * Fix badges
 
+0.9.4
+-----
+* BugFix __retry_internal_async, had replaced function sleep to asyncio.sleep
+
 0.9.3
 -----
 * Add work with async function.
