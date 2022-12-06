@@ -1,4 +1,0 @@
-pbr
-pytest
-tox
-wheel
