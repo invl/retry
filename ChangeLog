@@ -1,11 +1,17 @@
 CHANGES
 =======
 
+0.9.5
+-----
+
+* removed redundant dependencies
+
 0.9.4
 -----
 
-* Add on_exception parameter accepting a handler called when exception is captured.
-  The callback can also be used to handle the exception and interrupt further retries.
+* Updated version to 0.9.4 with tag
+* Add on\_exception handler called with captured exception. (#1)
+* Updates to construct PyPi retry2 wheel package
 
 0.9.3
 -----
