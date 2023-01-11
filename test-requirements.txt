@@ -1,5 +1,4 @@
 -r requirements.txt
-mock
 pbr
 pytest
 tox
