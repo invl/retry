@@ -1,23 +1,55 @@
 CHANGES
 =======
 
+0.9.5
+-----
+
+* removed redundant dependencies
+
+0.9.4
+-----
+
+* Updated version to 0.9.4 with tag
+* Add on\_exception handler called with captured exception. (#1)
+* Updates to construct PyPi retry2 wheel package
+
+0.9.3
+-----
+
+* Added log\_traceback parameter to retry + improved logging by adding failed function reference
+* Trim setup.py
+* Move NullHandler to .compat
+* Expose retry.retry\_call
+* Relative import
+* Move tests out of package
+* Bump version
+* Fix badges
+
 0.9.2
 -----
 
+* Update ChangeLog
+* Update AUTHORS
+* Don't pin pytest
+* tox: Add py35
+* Bump version
 * Updating requirements.txt to allow for any decorators >=3.4.2
 
 0.9.1
 -----
 
-* Fix dependency issues with other packages caused by explicit dep verions in requirements
+* Updates setup.cfg version info
+* Updates authors and changelog
+* Adds version ranges to requirements, widening compatibility with other packages and their deps
 
 0.9.0
 -----
 
+* Fix typo in classifier
 * Add AUTHORS and ChangeLog files
 * Packaging the application using PBR
 * Update documentation
-* Add retry_call function
+* Add retry\_call function
 * Update tox.ini
 * Update requirements
 * Move the tests to the appropriate package
@@ -35,7 +67,7 @@ CHANGES
 * v0.8.0
 * dos2unix
 * Add argument jitter for retry()
-* Add argument max_delay for retry()
+* Add argument max\_delay for retry()
 * Refactor retry()
 
 0.7.0
@@ -46,8 +78,8 @@ CHANGES
 * retry(): Update docstring
 * retry(): Change default tries to -1
 * Move decorator() to .compat
-* Add test_tries_minus1()
-* Add test_tries_inf()
+* Add test\_tries\_minus1()
+* Add test\_tries\_inf()
 * Mock time.sleep in test case
 * Refactor retry()
 
@@ -57,7 +89,7 @@ CHANGES
 * v0.6.0
 * Fix inaccurate attempt counter
 * logger is now optional
-* Extract logging_logger
+* Extract logging\_logger
 * Make decorator module optional
 
 0.5.0
@@ -74,14 +106,14 @@ CHANGES
 * Add tox.ini
 * Extract retry/api.py
 * Require pytest
-* Add test_retry.py
+* Add test\_retry.py
 * Added tag 0.4.2 for changeset 315f5f1229f6
 
 0.4.2
 -----
 
 * Version 0.4.2
-* python2.6 support
+* (untested) python2.6 support
 * README.rst: Add installation
 * Add classifiers
 * Add LICENSE
@@ -89,7 +121,7 @@ CHANGES
 * Fix rST h1 h2 for README.rst
 * Add url
 * Add README.rst
-* Ignore *.egg-info
+* Ignore \*.egg-info
 * Ignore .env
 * Ignore .ropeproject
 * Ignore .git
@@ -100,7 +132,7 @@ CHANGES
 
 * Version 0.4.1
 * Add license
-* Add long_description
+* Add long\_description
 * Add docstring for retry()
 * Added tag 0.4.0 for changeset e053cae4b105
 
