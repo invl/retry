@@ -1,7 +1,6 @@
 import functools
 import logging
 
-
 try:
     from decorator import decorator
 except ImportError:
@@ -19,10 +18,4 @@ except ImportError:
         return decor
 
 
-try:  # Python 2.7+
-    from logging import NullHandler
-except ImportError:
-    class NullHandler(logging.Handler):
 
-        def emit(self, record):
-            pass

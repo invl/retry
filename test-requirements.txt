@@ -1,5 +1,0 @@
-mock
-pbr
-pytest
-tox
-wheel
