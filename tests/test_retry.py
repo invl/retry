@@ -183,3 +183,50 @@ def test_retry_call_with_kwargs():
 
     assert result == kwargs['value']
     assert f_mock.call_count == 1
+
+
+def test_callback_between():
+    called_function_between = [0]
+
+    def fc():
+        print("Wait...")
+        called_function_between[0] += 1
+
+    @retry(tries=2,callback_between=fc)
+    def f():
+        raise ValueError
+
+    with pytest.raises(ValueError):
+        f()
+    assert called_function_between[0] == 1
+
+def test_callback_between_args():
+    called_function_between = [0]
+
+    def fc(msg):
+        print(msg)
+        called_function_between[0] += 1
+
+    @retry(tries=2,callback_between=fc,callback_between_args=("Wait A Little Bit...",))
+    def f():
+        raise ValueError
+
+    with pytest.raises(ValueError):
+        f()
+    assert called_function_between[0] == 1
+
+def test_callback_between_kwargs():
+    called_function_between = [0]
+
+    def fc(msg,other_msg):
+        print(msg)
+        print(other_msg)
+        called_function_between[0] += 1
+
+    @retry(tries=3,callback_between=fc,callback_between_args=("Wait A Little Bit...",),callback_between_kwargs={"other_msg":"This Is Other Msg."})
+    def f():
+        raise ValueError
+
+    with pytest.raises(ValueError):
+        f()
+    assert called_function_between[0] == 2
