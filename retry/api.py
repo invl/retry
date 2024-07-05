@@ -37,7 +37,8 @@ def __retry_internal(f, exceptions=Exception, tries=-1, delay=0, max_delay=None,
                 raise
 
             if logger is not None:
-                logger.warning('%s, retrying in %s seconds...', e, _delay)
+                warning_msg = "%s, retrying in %s seconds..." % (e, _delay)
+                logger.warning(warning_msg)
 
             time.sleep(_delay)
             _delay *= backoff
